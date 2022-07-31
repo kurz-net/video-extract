@@ -12,7 +12,6 @@
     "prisma"
   ],
   "scripts": {
-    "build": "yarn run build",
     "dev:web": "yarn --cwd apps/web run dev",
     "dev:api": "yarn --cwd apps/api run dev",
     "lint": "eslint **/*.ts*",
