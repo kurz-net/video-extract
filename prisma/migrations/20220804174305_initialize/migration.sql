@@ -1,0 +1,18 @@
+-- CreateTable
+CREATE TABLE "Video" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "progress" INTEGER NOT NULL DEFAULT 0,
+    "failed" BOOLEAN NOT NULL DEFAULT false,
+    "title" TEXT NOT NULL,
+    "originUrl" TEXT NOT NULL,
+    "fileUrl" TEXT
+);
+
+-- CreateTable
+CREATE TABLE "VideoClip" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "videoId" INTEGER,
+    CONSTRAINT "VideoClip_videoId_fkey" FOREIGN KEY ("videoId") REFERENCES "Video" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+);
