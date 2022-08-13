@@ -1,22 +1,28 @@
 import * as trpc from "@trpc/server";
-import { z } from "zod";
 import { Context } from "./context";
+import prisma from "../prisma"
+import { z } from "zod";
 
 export const appRouter = trpc
   .router<Context>()
-  .query("getUser", {
-    async resolve({ ctx, input }) {
-      return { id: "test", name: "Bilbo" };
+  .query("videos", {
+    async resolve() {
+      const videos = await prisma.video.findMany()
+      return videos
     },
   })
-  .mutation("createUser", {
-    // validate input with Zod
-    input: z.object({ name: z.string().min(5) }),
-    async resolve({ ctx, input }) {
-      // use your ORM of choice
-      return { message: "hello world" };
-    },
-  });
+  .mutation("createVideo", {
+    input: z.object({
+      url: z.string().url()
+    }),
+    async resolve({ input }) {
+      const video = await prisma.video.create({
+        data: {
+          originUrl: input.url
+        }
+      })
+      return video
+    }
+  })
 
-// export type definition of API
 export type AppRouter = typeof appRouter;

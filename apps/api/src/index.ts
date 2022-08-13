@@ -12,6 +12,8 @@ app.use(
   cors({ origin: [process.env.ALLOW_ORIGIN || "http://localhost:3000"] })
 );
 
+app.use(express.static("videos"))
+
 app.use(
   "/trpc",
   trpcExpress.createExpressMiddleware({
@@ -20,4 +22,7 @@ app.use(
   })
 );
 
-app.listen(process.env.PORT || 5000);
+const port = process.env.PORT || 5000
+app.listen(port, () => {
+  console.log(`Running on http://localhost:${port}`)
+});

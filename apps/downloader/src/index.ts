@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client"
 import fs from "fs-extra"
 import ytdl from "ytdl-core"
-import { v4 as uuidv4 } from "uuid"
 import path from "path"
 
 const prisma = new PrismaClient()
@@ -26,8 +25,7 @@ async function downloadVideos() {
       data: { title }
     })
 
-    const uuid = uuidv4()
-    const filePath = path.resolve(`${uuid}.mp4`)
+    const filePath = path.resolve(`../../api/videos/${video.uuid}.mp4`)
 
     const stream = ytdl(video.originUrl)
     stream.pipe(fs.createWriteStream(filePath))

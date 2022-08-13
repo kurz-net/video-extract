@@ -13,7 +13,7 @@ datasource db {
 model Video {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  uuid      String   @unique
+  uuid      String   @unique @default(uuid())
 
   progress Int     @default(0)
   failed   Boolean @default(false)

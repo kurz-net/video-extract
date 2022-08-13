@@ -10,7 +10,6 @@ async function seed() {
       progress: 0,
       failed: false,
       uuid: "ba79de25-c99a-4863-973c-e831715a35c7",
-
       originUrl: "https://www.youtube.com/watch?v=OZJ8cc64mbk"
     }
   })
