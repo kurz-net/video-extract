@@ -1,5 +1,6 @@
 import { useEffect, useCallback } from "react"
 import type { NextPage } from "next";
+import Link from "next/link"
 import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
@@ -35,8 +36,15 @@ const Home: NextPage = () => {
               controls
             />
           </>}
-          <div>{video.title}</div>
+          {video.progress === 100 ? (
+            <div>
+              <Link href={`/videos/${video.uuid}`}>
+                <span className="underline cursor-pointer">{video.title}</span>
+              </Link>
+            </div>
+          ) : <div>{video.title}</div>}
           <div>{video.progress}% downloaded</div>
+          <div>{video._count.clips} clips</div>
         </div>
       ))}
     </div>

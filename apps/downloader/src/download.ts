@@ -25,7 +25,7 @@ async function downloadVideos() {
       data: { title }
     })
 
-    const filePath = path.resolve(`../../api/videos/${video.uuid}.mp4`)
+    const filePath = path.resolve(`./files/${video.uuid}.mp4`)
 
     const stream = ytdl(video.originUrl)
     stream.pipe(fs.createWriteStream(filePath))
@@ -35,10 +35,12 @@ async function downloadVideos() {
 
       const diff = Date.now() - ts
       if (diff % 1000 === 0) {
-        await prisma.video.update({
-          where: { id: video.id },
-          data: { progress }
-        })
+        try {
+          await prisma.video.update({
+            where: { id: video.id },
+            data: { progress }
+          })
+        } catch(e) {}
       }
       ts = Date.now()
     });

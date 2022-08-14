@@ -13,6 +13,14 @@ async function seed() {
       originUrl: "https://www.youtube.com/watch?v=OZJ8cc64mbk"
     }
   })
+  await prisma.video.create({
+    data: {
+      progress: 0,
+      failed: false,
+      uuid: "9d24e7de-f1ef-4fdb-a93d-5dc3785233ef",
+      originUrl: "https://www.youtube.com/watch?v=9VU2lKApbVo"
+    }
+  })
 }
 
 seed()

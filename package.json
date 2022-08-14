@@ -13,11 +13,12 @@
   ],
   "scripts": {
     "dev:web": "yarn --cwd apps/web run dev",
-    "dev:api": "yarn --cwd apps/api run dev",
-    "dev:down": "yarn --cwd apps/downloader run dev",
+    "dev:down:api": "yarn --cwd apps/downloader run dev:api",
+    "dev:down:down": "yarn --cwd apps/downloader run dev:down",
     "lint": "eslint **/*.ts*",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "seed": "npx prisma db seed"
+    "db:seed": "npx prisma db seed",
+    "db:clear": "ts-node prisma/clear.ts"
   },
   "devDependencies": {
     "@types/node": "^18.6.2",

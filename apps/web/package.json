@@ -18,8 +18,7 @@
     "@trpc/server": "^9.26.2",
     "@trpc/client": "^9.26.2",
     "@trpc/next": "^9.26.2",
-    "@trpc/react": "^9.26.2",
-    "@vx/api": "*"
+    "@trpc/react": "^9.26.2"
   },
   "devDependencies": {
     "@types/node": "18.0.0",
