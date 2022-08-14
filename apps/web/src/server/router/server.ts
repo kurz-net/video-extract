@@ -21,7 +21,10 @@ export const videoRouter = createRouter()
     input: z.object({ uuid: z.string() }),
     async resolve({ input: { uuid } }) {
       const video = await prisma.video.findFirst({
-        where: { uuid }
+        where: { uuid },
+        include: {
+          clips: true
+        }
       })
       return video
     }

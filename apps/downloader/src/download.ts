@@ -21,7 +21,7 @@ async function downloadVideos() {
     const info = await ytdl.getInfo(video.originUrl)
     const { videoDetails: { title } } = info
     await prisma.video.update({
-      where: { id: video.id },
+      where: { uuid: video.uuid },
       data: { title }
     })
 
@@ -37,7 +37,7 @@ async function downloadVideos() {
       if (diff % 1000 === 0) {
         try {
           await prisma.video.update({
-            where: { id: video.id },
+            where: { uuid: video.uuid },
             data: { progress }
           })
         } catch(e) {}
@@ -46,14 +46,14 @@ async function downloadVideos() {
     });
     stream.on("error", async () => {
       await prisma.video.update({
-        where: { id: video.id },
+        where: { uuid: video.uuid },
         data: { failed: true }
       })
       res()
     })
     stream.on("end", async () => {
       await prisma.video.update({
-        where: { id: video.id },
+        where: { uuid: video.uuid },
         data: {
           progress: 100,
           fileUrl: filePath

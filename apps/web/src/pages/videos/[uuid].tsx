@@ -7,14 +7,15 @@ const Video: NextPage = () => {
   const router = useRouter()
   const { uuid } = router.query as { uuid: string }
   const video = trpc.useQuery(["video", { uuid }]);
-  if (video.isFetched && !video.data) {
-    return <div className="m-8 text-3xl">This video does not exist</div>
-  }
 
   const videoEl = useRef<HTMLVideoElement>(null)
 
   const handleClick = () => {
     const ts = videoEl.current?.currentTime
+  }
+
+  if (video.isFetched && !video.data) {
+    return <div className="m-8 text-3xl">This video does not exist</div>
   }
 
   return (
@@ -33,6 +34,10 @@ const Video: NextPage = () => {
         <div>
           <button onClick={handleClick}>print</button>
         </div>
+        <h2 className="text-2xl">Clips</h2>
+        {video.data?.clips.map(clip => (<div>
+
+        </div>))}
       </>)}
     </div>
   )
