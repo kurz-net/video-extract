@@ -23,7 +23,7 @@ const Home: NextPage = () => {
   return <>
     <div className="m-8">
       <h1 className="text-3xl">Videos</h1>
-      <button className="my-4 px-4 py-2 border-4 border-gray-300" onClick={handleCreateVideo}>
+      <button className="my-4 px-4 py-2 border-2 rounded-lg" onClick={handleCreateVideo}>
         + add
       </button>
       {videos.isLoading && <div>Loading videos...</div>}

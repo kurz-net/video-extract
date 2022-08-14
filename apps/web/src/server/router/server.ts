@@ -42,4 +42,23 @@ export const videoRouter = createRouter()
       return video
     }
   })
+  .mutation("createClip", {
+    input: z.object({
+      videoUuid: z.string(),
+      startTime: z.number(),
+      endTime: z.number(),
+      title: z.string().nullable()
+    }),
+    async resolve({ input }) {
+      const videoClip = await prisma.videoClip.create({
+        data: {
+          videoId: input.videoUuid,
+          startTime: input.startTime,
+          endTime: input.endTime,
+          title: input.title || ""
+        }
+      })
+      return videoClip
+    }
+  })
 

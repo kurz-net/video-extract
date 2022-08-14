@@ -2,8 +2,49 @@ import { PrismaClient } from "@prisma/client"
 import fs from "fs-extra"
 import ytdl from "ytdl-core"
 import path from "path"
+import { spawnSync } from 'child_process';
 
 const prisma = new PrismaClient()
+
+async function downloadClips() {
+  return new Promise<void>(async (res) => {
+    const clip = await prisma.videoClip.findFirst({
+      where: {
+        failed: false,
+        downloaded: false
+      },
+      include: {
+        video: true
+      }
+    })
+    if (!clip) {
+      res()
+      return;
+    }
+
+    const filePath = path.resolve(`./files/${clip.uuid}.mp4`)
+    const args = [
+      '-i',
+      clip.video!.fileUrl as string,
+      '-ss',
+      clip.startTime.toString(),
+      '-to',
+      clip.endTime.toString(),
+      filePath,
+    ];
+    spawnSync('ffmpeg', args);
+
+
+    await prisma.videoClip.update({
+      where: { uuid: clip.uuid },
+      data: {
+        downloaded: true,
+        fileUrl: filePath
+      }
+    })
+    res()
+  })
+}
 
 async function downloadVideos() {
   return new Promise<void>(async (res) => {
@@ -67,6 +108,7 @@ async function downloadVideos() {
 async function main() {
   while(true) {
     await downloadVideos()
+    await downloadClips()
   }
 }
 
