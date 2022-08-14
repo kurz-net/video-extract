@@ -1,9 +1,0 @@
-{
-  "name": "@vx/spaces",
-  "version": "1.0.0",
-  "main": "index.js",
-  "private": true,
-  "dependencies": {
-    "aws-sdk": "^2.1185.0"
-  }
-}
