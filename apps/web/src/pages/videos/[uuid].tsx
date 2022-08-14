@@ -1,7 +1,14 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useRouter } from 'next/router'
 import type { NextPage } from "next";
 import { trpc } from "../../utils/trpc";
+
+function formatTime(time: number): string {
+  const seconds = time % 60
+  const minutes = Math.floor(time / 60)
+  const hours = Math.floor(time / 60 / 60)
+  return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+}
 
 const Video: NextPage = () => {
   const router = useRouter()
@@ -10,14 +17,18 @@ const Video: NextPage = () => {
 
   const videoEl = useRef<HTMLVideoElement>(null)
 
-  const handleClick = () => {
+
+  const [startTime, setStartTime] = useState<number | undefined>()
+  const [endTime, setEndTime] = useState<number | undefined>()
+  const handleCreateClip = () => {
+    if (!startTime || !endTime) return;
+    if (startTime >= endTime) return
     const ts = videoEl.current?.currentTime
   }
 
   if (video.isFetched && !video.data) {
     return <div className="m-8 text-3xl">This video does not exist</div>
   }
-
   return (
     <div className="m-8">
       {video.isLoading ? <div>Loading video...</div>
@@ -31,8 +42,18 @@ const Video: NextPage = () => {
             controls
           />
         </div>
-        <div>
-          <button onClick={handleClick}>print</button>
+        <div className="my-4">
+          <div>
+            <button className="py-2 px-4 border-4 mr-4" onClick={() => setStartTime(Math.floor(videoEl.current?.currentTime || 0))}>set start</button>
+            {startTime === undefined ? <span>no start time</span> : formatTime(startTime)}
+          </div>
+          <div>
+            <button className="py-2 px-4 border-4 mr-4" onClick={() => setEndTime(Math.floor(videoEl.current?.currentTime || 0))}>set end</button>
+            {endTime === undefined ? <span>no end time</span> : formatTime(endTime)}
+          </div>
+          <div>
+            <button className="py-2 px-4 border-4" onClick={handleCreateClip}>create clip</button>
+          </div>
         </div>
         <h2 className="text-2xl">Clips</h2>
         {video.data?.clips.map(clip => (<div>
