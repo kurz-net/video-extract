@@ -17,15 +17,15 @@ async function downloadClips() {
         video: true
       }
     })
-    if (!clip) {
+    if (!clip || !clip.video) {
       res()
       return;
     }
 
-    const filePath = path.resolve(`./files/${clip.uuid}.mp4`)
+    const filePath = path.join(__dirname, `../files/${clip.uuid}.mp4`)
     const args = [
       '-i',
-      clip.video!.fileUrl as string,
+      clip.video.fileUrl as string,
       '-ss',
       clip.startTime.toString(),
       '-to',

@@ -16,3 +16,4 @@
 - [ ] responsiveness
 - [ ] different video formats
 - [ ] minify video files
+- [ ] look out for ytdl-core bug fix
