@@ -61,4 +61,19 @@ export const videoRouter = createRouter()
       return videoClip
     }
   })
+  .mutation("renameClip", {
+    input: z.object({
+      clipUuid: z.string(),
+      title: z.string().nullable()
+    }),
+    async resolve({ input }) {
+      const videoClip = await prisma.videoClip.update({
+        where: { uuid: input.clipUuid },
+        data: {
+          title: input.title || ""
+        }
+      })
+      return videoClip
+    }
+  })
 
