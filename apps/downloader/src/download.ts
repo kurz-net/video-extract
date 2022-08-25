@@ -121,7 +121,17 @@ async function cleanUpFiles() {
   }
 }
 
+async function ensureFileDirectory() {
+  try {
+    await fs.access(FILES_DIR)
+  } catch(e) {
+    await fs.mkdirp(FILES_DIR)
+  }
+}
+
 async function main() {
+  await ensureFileDirectory()
+
   while(true) {
     await downloadVideos()
     await downloadClips()
