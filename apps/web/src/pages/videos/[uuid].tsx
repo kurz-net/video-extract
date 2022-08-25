@@ -27,7 +27,7 @@ const Video: NextPage = () => {
 
   const [startTime, setStartTime] = useState<number | undefined>()
   const [endTime, setEndTime] = useState<number | undefined>()
-  const handleCreateClip = useCallback(() => {
+  const handleCreateClip = () => {
     if (startTime === undefined || endTime === undefined) {
       alert("Start or end time is not defined")
       return;
@@ -38,7 +38,7 @@ const Video: NextPage = () => {
     }
     const title = prompt("video clip name")
     createClip.mutate({ title, startTime, endTime, videoUuid: uuid })
-  }, [])
+  }
 
   if (video.isFetched && !video.data) {
     return <div className="m-8 text-3xl">This video does not exist</div>
@@ -91,6 +91,13 @@ function VideoClipDisplay(props: VideoClipDisplayProps) {
     renameClip.mutate({ title, clipUuid: clip.uuid })
   }, [clip])
 
+  const deleteClip = trpc.useMutation(["deleteClip"])
+  const handleDelete = useCallback(() => {
+    const ok = confirm("Do you really want to delete this clip?")
+    if (!ok) return;
+    deleteClip.mutate({ clipUuid: clip.uuid })
+  }, [clip])
+
   return (
     <div key={clip.uuid} className="flex my-2">
       <div>
@@ -106,6 +113,7 @@ function VideoClipDisplay(props: VideoClipDisplayProps) {
         {clip.downloaded && <div>
           <a className="underline" target="_blank" href={`http://localhost:5000/${clip.uuid}.mp4`}>download</a>
           <button className="underline ml-2" onClick={handleRename}>rename</button>
+          <button className="underline ml-2" onClick={handleDelete}>delete</button>
         </div>}
       </div>
     </div>

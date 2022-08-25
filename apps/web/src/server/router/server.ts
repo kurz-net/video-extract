@@ -76,4 +76,14 @@ export const videoRouter = createRouter()
       return videoClip
     }
   })
-
+  .mutation("deleteClip", {
+    input: z.object({
+      clipUuid: z.string()
+    }),
+    async resolve({ input }) {
+      const videoClip = await prisma.videoClip.delete({
+        where: { uuid: input.clipUuid }
+      })
+      return videoClip
+    }
+  })
