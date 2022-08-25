@@ -2,6 +2,7 @@ import { useEffect, useCallback } from "react"
 import type { NextPage } from "next";
 import Link from "next/link"
 import { trpc } from "../utils/trpc";
+import { API_URL } from "../utils/config";
 
 const Home: NextPage = () => {
   const videos = trpc.useQuery(["videos"]);
@@ -30,7 +31,7 @@ const Home: NextPage = () => {
           {video.progress === 100 && <>
             <video
               className="mb-4"
-              src={`http://localhost:5000/${video.uuid}.mp4`}
+              src={`${API_URL}${video.uuid}.mp4`}
               controls
             />
           </>}

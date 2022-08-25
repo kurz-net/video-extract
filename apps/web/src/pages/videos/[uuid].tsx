@@ -2,6 +2,7 @@ import { useRef, useState, useCallback } from "react"
 import { useRouter } from 'next/router'
 import type { NextPage } from "next";
 import { inferQueryOutput, trpc } from "../../utils/trpc";
+import { API_URL } from "../../utils/config"
 
 type VideoClip = Exclude<inferQueryOutput<"video">, null>["clips"][number]
 
@@ -16,9 +17,6 @@ function formatTime(time: number): string {
 
   return `${hs}:${ms}:${ss}`
 }
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL?.endsWith("/")
-  ? process.env.NEXT_PUBLIC_API_URL : process.env.NEXT_PUBLIC_API_URL + "/"
 
 const Video: NextPage = () => {
   const router = useRouter()
