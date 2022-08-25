@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from "react"
+import { useEffect } from "react"
 import type { NextPage } from "next";
 import Link from "next/link"
 import { trpc } from "../utils/trpc";
@@ -13,11 +13,11 @@ const Home: NextPage = () => {
     return () => clearInterval(interval)
   }, [])
 
-  const handleCreateVideo = useCallback(() => {
+  const handleCreateVideo = () => {
     const url = prompt("YouTube URL")
     if (!url) return;
     createVideo.mutate({ url })
-  }, [])
+  }
 
   return <>
     <div className="m-8">

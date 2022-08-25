@@ -4,8 +4,6 @@ import type { NextPage } from "next";
 import { inferQueryOutput, trpc } from "../../utils/trpc";
 import { API_URL } from "../../utils/config"
 
-type VideoClip = Exclude<inferQueryOutput<"video">, null>["clips"][number]
-
 function formatTime(time: number): string {
   const seconds = time % 60
   const minutes = Math.floor(time / 60)
@@ -47,8 +45,8 @@ const Video: NextPage = () => {
   return (
     <div className="m-8">
       <a href="/" className="underline">back</a>
-      {video.isLoading ? <div>Loading video...</div>
-      : (<>
+      {video.isLoading && <div>Loading video...</div>}
+      {video.isFetched && <>
         <h1 className="text-3xl">{video.data?.title}</h1>
         <div className="my-4">
           <video
@@ -62,11 +60,11 @@ const Video: NextPage = () => {
           <div className="flex">
             <button className="py-2 px-4 border-2 rounded-lg mr-4" onClick={() => setStartTime(Math.floor(videoEl.current?.currentTime || 0))}>set start</button>
             <div className="mr-4 flex items-center">
-              {startTime === undefined ? <span>no start time</span> : formatTime(startTime)}
+              {startTime === undefined ? <span className="italic">not set</span> : formatTime(startTime)}
             </div>
 
             <div className="mr-4 flex items-center">
-              {endTime === undefined ? <span>no end time</span> : formatTime(endTime)}
+              {endTime === undefined ? <span className="italic">not set</span> : formatTime(endTime)}
             </div>
             <button className="py-2 px-4 border-2 rounded-lg mr-4" onClick={() => setEndTime(Math.floor(videoEl.current?.currentTime || 0))}>set end</button>
 
@@ -75,10 +73,12 @@ const Video: NextPage = () => {
         </div>
         <h2 className="text-2xl">Clips</h2>
         {video.data?.clips.map(clip => <VideoClipDisplay key={clip.uuid} clip={clip} />)}
-      </>)}
+      </>}
     </div>
   )
 }
+
+type VideoClip = Exclude<inferQueryOutput<"video">, null>["clips"][number]
 
 type VideoClipDisplayProps = {
   clip: VideoClip
