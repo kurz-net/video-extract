@@ -1,19 +1,38 @@
 # Video Extraction Tool
 
-## todos
-- [ ] sort clips by time
-- [ ] show clips in table?
-- [ ] failed video / clip downloads
-- [ ] dynamic localhost:5000, ports, api urls
-- [ ] check for missing files
-- [ ] delete clip
-  - [ ] delete file
-- [ ] delete video
-  - [ ] also delete clips
-  - [ ] delete all files
-- [ ] list grid view
-- [ ] video tag filtering
-- [ ] responsiveness
-- [ ] different video formats
-- [ ] minify video files
-- [ ] look out for ytdl-core bug fix
+## Prerequisites
+- ffmpeg
+- node (>= v14)
+- npm
+- yarn
+
+## Initial Setup
+```bash
+$ yarn # install dependencies
+$ yarn db:gen # generate prisma client
+```
+
+## Development setup
+```bash
+$ yarn dev:all # run all components in parallel
+```
+
+Or run these commands in separate terminals
+```bash
+$ yarn dev:web
+$ yarn dev:down:api
+$ yarn dev:down:down
+```
+
+## Overview
+There are 3 components to this software:
+- Web Application
+- API
+- Downloader
+
+The web application is a NextJS app with a tPRC backend.
+
+The API is only there to serve the downloaded mp4 video and clip files.
+
+The Downloader downloads the youtube videos and cuts the clips from
+those video files.

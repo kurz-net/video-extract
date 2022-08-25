@@ -18,7 +18,9 @@
     "dev:all": "run-p dev:web dev:down:*",
     "lint": "eslint **/*.ts*",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "db:seed": "npx prisma db seed",
+
+    "db:gen": "prisma generate",
+    "db:seed": "prisma db seed",
     "db:clear": "ts-node prisma/clear.ts"
   },
   "devDependencies": {
