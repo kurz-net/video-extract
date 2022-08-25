@@ -6,6 +6,8 @@ import { spawnSync } from 'child_process';
 
 const prisma = new PrismaClient()
 
+const FILES_DIR = path.join(__dirname, "../files")
+
 async function downloadClips() {
   return new Promise<void>(async (res) => {
     const clip = await prisma.videoClip.findFirst({
@@ -22,14 +24,11 @@ async function downloadClips() {
       return;
     }
 
-    const filePath = path.join(__dirname, `../files/${clip.uuid}.mp4`)
+    const filePath = path.join(FILES_DIR, `${clip.uuid}.mp4`)
     const args = [
-      '-i',
-      clip.video.fileUrl as string,
-      '-ss',
-      clip.startTime.toString(),
-      '-to',
-      clip.endTime.toString(),
+      '-i', clip.video.fileUrl as string,
+      '-ss', clip.startTime.toString(),
+      '-to', clip.endTime.toString(),
       filePath,
     ];
     spawnSync('ffmpeg', args);
@@ -59,6 +58,7 @@ async function downloadVideos() {
       return;
     }
 
+    // We get the title of the video from the youtube api
     const info = await ytdl.getInfo(video.originUrl)
     const { videoDetails: { title } } = info
     await prisma.video.update({
@@ -66,24 +66,23 @@ async function downloadVideos() {
       data: { title }
     })
 
-    const filePath = path.resolve(`./files/${video.uuid}.mp4`)
+    const filePath = path.join(FILES_DIR, `${video.uuid}.mp4`)
+    await prisma.video.update({
+      where: { uuid: video.uuid },
+      data: { fileUrl: filePath }
+    })
 
     const stream = ytdl(video.originUrl)
     stream.pipe(fs.createWriteStream(filePath))
-    let ts = Date.now()
     stream.on("progress", async (_, downloaded, total) => {
       const progress = Math.ceil(downloaded / total * 100);
 
-      const diff = Date.now() - ts
-      if (diff % 1000 === 0) {
-        try {
-          await prisma.video.update({
-            where: { uuid: video.uuid },
-            data: { progress }
-          })
-        } catch(e) {}
-      }
-      ts = Date.now()
+      try {
+        await prisma.video.update({
+          where: { uuid: video.uuid },
+          data: { progress }
+        })
+      } catch(e) { /* it's ok if the update doesn't happen successfully */ }
     });
     stream.on("error", async () => {
       await prisma.video.update({
@@ -93,22 +92,43 @@ async function downloadVideos() {
       res()
     })
     stream.on("end", async () => {
-      await prisma.video.update({
-        where: { uuid: video.uuid },
-        data: {
-          progress: 100,
-          fileUrl: filePath
-        }
-      })
+      try {
+        await prisma.video.update({
+          where: { uuid: video.uuid },
+          data: {
+            progress: 100,
+            fileUrl: filePath
+          }
+        })
+      } catch(e) {}
       res()
     })
   })
+}
+
+async function cleanUpFiles() {
+  const files = await fs.readdir(FILES_DIR)
+  for (const file of files) {
+    const [uuid, ] = file.split(".") // example: "2c536aa6-296f-4140-aa2b-711b27b928c3.mp4"
+    
+    const video = await prisma.video.findFirst({ where: { uuid } })
+    const clip = await prisma.videoClip.findFirst({ where: { uuid } })
+
+    if (video || clip) continue
+
+    // no corresponding clip or video was found, so we delete the file
+    await fs.rm(path.join(FILES_DIR, file))
+  }
 }
 
 async function main() {
   while(true) {
     await downloadVideos()
     await downloadClips()
+
+    // if a video or clip is deleted from the database,
+    // we'll look out for any .mp4 files we have to remove.
+    await cleanUpFiles()
   }
 }
 

@@ -7,10 +7,8 @@ const Home: NextPage = () => {
   const videos = trpc.useQuery(["videos"]);
   const createVideo = trpc.useMutation(["createVideo"])
 
-  let interval: NodeJS.Timer;
   useEffect(() => {
-    if (!interval) return
-    interval = setInterval(videos.refetch, 1000)
+    const interval = setInterval(videos.refetch, 100)
     return () => clearInterval(interval)
   }, [])
 

@@ -12,12 +12,17 @@ $ yarn # install dependencies
 $ yarn db:gen # generate prisma client
 ```
 
+Setup .env file, for example:
+```
+DATABASE_URL=file:./database.db
+```
+
 ## Development setup
 ```bash
 $ yarn dev:all # run all components in parallel
 ```
 
-Or run these commands in separate terminals
+Or run these commands in separate shells
 ```bash
 $ yarn dev:web
 $ yarn dev:down:api
