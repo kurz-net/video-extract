@@ -31,7 +31,7 @@ model VideoClip {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  video     Video? @relation(fields: [videoId], references: [uuid])
+  video     Video? @relation(fields: [videoId], references: [uuid], onDelete: Cascade)
   videoId   String?
 
   startTime Float

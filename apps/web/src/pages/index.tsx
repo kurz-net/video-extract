@@ -7,6 +7,7 @@ import { API_URL } from "../utils/config";
 const Home: NextPage = () => {
   const videos = trpc.useQuery(["videos"]);
   const createVideo = trpc.useMutation(["createVideo"])
+  const deleteVideo = trpc.useMutation(["deleteVideo"])
 
   useEffect(() => {
     const interval = setInterval(videos.refetch, 100)
@@ -17,6 +18,12 @@ const Home: NextPage = () => {
     const url = prompt("YouTube URL")
     if (!url) return;
     createVideo.mutate({ url })
+  }
+
+  const handleDeleteVideo = (uuid: string) => {
+    const ok = confirm("Are you sure?")
+    if (!ok) return;
+    deleteVideo.mutate({ videoUuid: uuid })
   }
 
   return <>
@@ -44,6 +51,9 @@ const Home: NextPage = () => {
           ) : <div>{video.title}</div>}
           <div>{video.progress}% downloaded</div>
           <div>{video._count.clips} clip/s</div>
+          <div>
+            <button className="underline" onClick={() => handleDeleteVideo(video.uuid)}>delete</button>
+          </div>
         </div>
       ))}
     </div>
