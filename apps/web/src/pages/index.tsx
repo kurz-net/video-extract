@@ -43,7 +43,7 @@ const Home: NextPage = () => {
             </div>
           ) : <div>{video.title}</div>}
           <div>{video.progress}% downloaded</div>
-          <div>{video._count.clips} clips</div>
+          <div>{video._count.clips} clip/s</div>
         </div>
       ))}
     </div>
