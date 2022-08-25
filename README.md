@@ -15,6 +15,8 @@ $ yarn db:gen # generate prisma client
 Setup .env file, for example:
 ```
 DATABASE_URL=file:./database.db
+API_PORT=5000
+NEXT_PUBLIC_API_URL="http://localhost:5000"
 ```
 
 ## Development setup

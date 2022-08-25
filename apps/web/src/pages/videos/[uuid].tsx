@@ -17,6 +17,9 @@ function formatTime(time: number): string {
   return `${hs}:${ms}:${ss}`
 }
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL?.endsWith("/")
+  ? process.env.NEXT_PUBLIC_API_URL : process.env.NEXT_PUBLIC_API_URL + "/"
+
 const Video: NextPage = () => {
   const router = useRouter()
   const { uuid } = router.query as { uuid: string }
@@ -53,7 +56,7 @@ const Video: NextPage = () => {
           <video
             ref={videoEl}
             className="mb-4"
-            src={`http://localhost:5000/${video.data?.uuid}.mp4`}
+            src={`${API_URL}${video.data?.uuid}.mp4`}
             controls
           />
         </div>
@@ -111,7 +114,7 @@ function VideoClipDisplay(props: VideoClipDisplayProps) {
       <div>
         {!clip.downloaded && <span>downloading...</span>}
         {clip.downloaded && <div>
-          <a className="underline" target="_blank" href={`http://localhost:5000/${clip.uuid}.mp4`}>download</a>
+          <a className="underline" target="_blank" href={`${API_URL}${clip.uuid}.mp4`}>view</a>
           <button className="underline ml-2" onClick={handleRename}>rename</button>
           <button className="underline ml-2" onClick={handleDelete}>delete</button>
         </div>}
