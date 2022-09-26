@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import type { NextPage } from "next";
 import { inferQueryOutput, trpc } from "../../utils/trpc";
 import { API_URL } from "../../utils/config"
+import { ArrowLeftIcon } from "@heroicons/react/24/outline"
 
 function formatTime(time: number): string {
   const seconds = time % 60
@@ -42,40 +43,50 @@ const Video: NextPage = () => {
   if (video.isFetched && !video.data) {
     return <div className="m-8 text-3xl">This video does not exist</div>
   }
-  return (
-    <div className="m-8">
-      <a href="/" className="underline">back</a>
+  return (<>
+    <div className="navbar bg-base-100 p-4">
+      <div className="flex-1">
+        <a role="button" href="/" className="btn btn-ghost btn-circle">
+          <ArrowLeftIcon className="w-5 h-5" />
+        </a>
+        <a className="btn btn-ghost normal-case text-xl">{video.data?.title}</a>
+      </div>
+    </div>
+    <main className="m-8">
       {video.isLoading && <div>Loading video...</div>}
       {video.isFetched && <>
-        <h1 className="text-3xl">{video.data?.title}</h1>
-        <div className="my-4">
-          <video
-            ref={videoEl}
-            className="mb-4"
-            src={`${API_URL}${video.data?.uuid}.mp4`}
-            controls
-          />
-        </div>
-        <div className="my-4">
-          <div className="flex">
-            <button className="py-2 px-4 border-2 rounded-lg mr-4" onClick={() => setStartTime(Math.floor(videoEl.current?.currentTime || 0))}>set start</button>
-            <div className="mr-4 flex items-center">
-              {startTime === undefined ? <span className="italic">not set</span> : formatTime(startTime)}
+        <div className="flex flex-wrap md:flex-nowrap space-x-0 md:space-x-8 space-y-8 md:space-y-0">
+          <div className="w-full space-y-4">
+            <div className="w-full">
+              <video
+                ref={videoEl}
+                className="w-full"
+                src={`${API_URL}${video.data?.uuid}.mp4`}
+                controls
+              />
             </div>
+            <div className="flex justify-between">
+              <button className="btn btn-ghost" onClick={() => setStartTime(Math.floor(videoEl.current?.currentTime || 0))}>set start</button>
+              <div className="flex items-center">
+                {startTime === undefined ? <span className="italic">not set</span> : formatTime(startTime)}
+              </div>
 
-            <div className="mr-4 flex items-center">
-              {endTime === undefined ? <span className="italic">not set</span> : formatTime(endTime)}
+              <div className="flex items-center">
+                {endTime === undefined ? <span className="italic">not set</span> : formatTime(endTime)}
+              </div>
+              <button className="btn btn-ghost" onClick={() => setEndTime(Math.floor(videoEl.current?.currentTime || 0))}>set end</button>
+
+              <button className="btn btn-outline" onClick={handleCreateClip}>create clip</button>
             </div>
-            <button className="py-2 px-4 border-2 rounded-lg mr-4" onClick={() => setEndTime(Math.floor(videoEl.current?.currentTime || 0))}>set end</button>
-
-            <button className="py-2 px-4 rounded-lg border-2" onClick={handleCreateClip}>create clip</button>
+          </div>
+          <div className="w-full">
+            <h2 className="text-2xl">Clips</h2>
+            {video.data?.clips.map(clip => <VideoClipDisplay key={clip.uuid} clip={clip} />)}
           </div>
         </div>
-        <h2 className="text-2xl">Clips</h2>
-        {video.data?.clips.map(clip => <VideoClipDisplay key={clip.uuid} clip={clip} />)}
       </>}
-    </div>
-  )
+    </main>
+  </>)
 }
 
 type VideoClip = Exclude<inferQueryOutput<"video">, null>["clips"][number]

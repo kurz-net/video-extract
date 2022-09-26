@@ -21,6 +21,22 @@ async function seed() {
       originUrl: "https://www.youtube.com/watch?v=Wqy3PBEglXQ",
     }
   })
+  await prisma.video.create({
+    data: {
+      progress: 0,
+      failed: false,
+      uuid: "8c6f3300-356a-4574-ab1b-0dff5a06bd77",
+      originUrl: "https://www.youtube.com/watch?v=0K3Yk8hv2Ug",
+    }
+  })
+  await prisma.video.create({
+    data: {
+      progress: 0,
+      failed: false,
+      uuid: "9e65073a-86a0-4d7c-9b1d-e74b51881cb2",
+      originUrl: "https://www.youtube.com/watch?v=jd5JwXoDXFo",
+    }
+  })
 }
 
 seed()

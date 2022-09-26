@@ -27,36 +27,50 @@ const Home: NextPage = () => {
   }
 
   return <>
-    <div className="m-8">
-      <h1 className="text-3xl">Videos</h1>
-      <button className="my-4 px-4 py-2 border-2 rounded-lg" onClick={handleCreateVideo}>
-        + add
-      </button>
-      {videos.isLoading && <div>Loading videos...</div>}
-      {videos.data?.map(video => (
-        <div key={video.uuid} className="my-4">
-          {video.progress === 100 && <>
-            <video
-              className="mb-4"
-              src={`${API_URL}${video.uuid}.mp4`}
-              controls
-            />
-          </>}
-          {video.progress === 100 ? (
-            <div>
-              <Link href={`/videos/${video.uuid}`}>
-                <span className="underline cursor-pointer">{video.title}</span>
-              </Link>
-            </div>
-          ) : <div>{video.title}</div>}
-          <div>{video.progress}% downloaded</div>
-          <div>{video._count.clips} clip/s</div>
-          <div>
-            <button className="underline" onClick={() => handleDeleteVideo(video.uuid)}>delete</button>
-          </div>
-        </div>
-      ))}
+    <div className="navbar bg-base-100 p-4">
+      <div className="flex-1">
+        <a className="btn btn-ghost normal-case text-xl">Video Extract</a>
+      </div>
+      <div className="navbar-end">
+        <button className="btn btn-primary" onClick={handleCreateVideo}>
+          + video
+        </button>
+      </div>
     </div>
+    <main className="m-8">
+      {videos.isLoading && <div>Loading videos...</div>}
+      <div className="w-full grid grid-cols-3 gap-8">
+        {videos.data?.map(video => (
+          <div key={video.uuid} className="card w-full bg-base-100 shadow-xl">
+            <figure>
+              {video.progress === 100 && <>
+                <video
+                  className="mb-4"
+                  src={`${API_URL}${video.uuid}.mp4`}
+                  controls
+                />
+              </>}
+            </figure>
+            <div className="card-body">
+              <h2 className="card-title">
+                {video.progress === 100 && <span>{video.title}</span>}
+                {video.progress < 100 && <span className="italic">Unknown</span>}
+              </h2>
+              <p>
+                {video.progress}% downloaded<br />
+                {video._count.clips} clip/s
+              </p>
+              <div className="card-actions justify-end">
+                {video.progress === 100 && (<>
+                  <button className="btn btn-ghost" onClick={() => handleDeleteVideo(video.uuid)}>delete</button>
+                  <a role="button" href={`/videos/${video.uuid}`} className="btn btn-ghost">view</a>
+                </>)}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </main>
   </>;
 };
 

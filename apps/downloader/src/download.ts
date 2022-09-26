@@ -127,6 +127,8 @@ async function ensureFileDirectory() {
   }
 }
 
+const delay = (ms: number) => new Promise(r => setTimeout(r, ms))
+
 export async function startDownloader() {
   await ensureFileDirectory()
 
@@ -139,5 +141,7 @@ export async function startDownloader() {
     // if a video or clip is deleted from the database,
     // we'll look out for any .mp4 files we have to remove.
     await cleanUpFiles()
+
+    await delay(10_000)
   }
 }
