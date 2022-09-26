@@ -102,6 +102,7 @@ function VideoClipDisplay(props: VideoClipDisplayProps) {
   const renameClip = trpc.useMutation(["renameClip"])
   const handleRename = useCallback(() => {
     const title = prompt("New video clip name", clip.title)
+    if (!title) return
     renameClip.mutate({ title, clipUuid: clip.uuid })
   }, [clip])
 
