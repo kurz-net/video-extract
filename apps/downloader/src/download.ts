@@ -1,10 +1,8 @@
-import { PrismaClient } from "@prisma/client"
+import { prisma } from "@vx/prisma/client"
 import fs from "fs-extra"
 import ytdl from "ytdl-core"
 import path from "path"
 import { spawnSync } from 'child_process';
-
-const prisma = new PrismaClient()
 
 const FILES_DIR = path.join(__dirname, "../files")
 
@@ -129,8 +127,10 @@ async function ensureFileDirectory() {
   }
 }
 
-async function main() {
+export async function startDownloader() {
   await ensureFileDirectory()
+
+  console.log("Downloader is running")
 
   while(true) {
     await downloadVideos()
@@ -141,12 +141,3 @@ async function main() {
     await cleanUpFiles()
   }
 }
-
-main()
-  .catch(e => {
-    console.log("Error:", e)
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect()
-  })

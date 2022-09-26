@@ -1,5 +1,5 @@
 import { createRouter } from "./context";
-import prisma from "../../utils/prisma"
+import { prisma } from "@vx/prisma/client"
 import { z } from "zod";
 
 export const videoRouter = createRouter()

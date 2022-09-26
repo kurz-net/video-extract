@@ -8,36 +8,36 @@
   "license": "MIT",
   "workspaces": [
     "apps/*",
-    "packages/*",
-    "prisma"
+    "packages/*"
   ],
   "scripts": {
-    "dev:web": "dotenv -e .env -- yarn --cwd apps/web run dev",
-    "dev:down:api": "dotenv -e .env -- yarn --cwd apps/downloader run dev:api",
-    "dev:down:down": "dotenv -e .env -- yarn --cwd apps/downloader run dev:down",
-    "dev:all": "dotenv -e .env -- run-p dev:web dev:down:*",
-    "lint": "eslint **/*.ts*",
+    "wrap-env": "dotenv -e .env -- ",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "db:gen": "prisma generate",
     "db:seed": "prisma db seed",
-    "db:clear": "ts-node prisma/clear.ts"
+    "db:clear": "tsx packages/prisma/src/clear.ts",
+    "dev": "yarn wrap-env turbo run dev --parallel",
+    "build": "yarn wrap-env turbo run build"
   },
   "devDependencies": {
     "@types/node": "^18.6.2",
     "prettier": "^2.7.1",
-    "prisma": "^4.2.1",
-    "ts-node": "^10.9.1",
+    "prisma": "^4.3.1",
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "@prisma/client": "^4.2.1",
-    "@typescript-eslint/eslint-plugin": "^5.31.0",
-    "@typescript-eslint/parser": "^5.31.0",
+    "@prisma/client": "^4.3.1",
     "dotenv-cli": "^6.0.0",
-    "eslint": "^8.20.0",
-    "npm-run-all": "^4.1.5"
+    "tsx": "^3.9.0",
+    "turbo": "^1.5.3",
+    "zod": "^3.19.1"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "schema": "packages/prisma/schema.prisma",
+    "seed": "tsx ./packages/prisma/src/seed.ts"
+  },
+  "packageManager": "yarn@3.2.3",
+  "engines": {
+    "node": "~16.17.0"
   }
 }

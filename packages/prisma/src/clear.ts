@@ -1,12 +1,12 @@
+import { clear } from "./utils";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-async function clear() {
-  await prisma.videoClip.deleteMany()
-  await prisma.video.deleteMany()
+async function main() {
+  await clear(prisma)
 }
 
-clear()
+main()
  .catch((e) => {
     console.error(`There was an error while clearing: ${e}`);
     process.exit(1);

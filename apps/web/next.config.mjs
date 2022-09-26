@@ -1,4 +1,7 @@
 import { env } from "./src/env/server.mjs";
+import transpile from "next-transpile-modules"
+
+const withTM = transpile(["@vx/prisma"])
 
 /**
  * Don't be scared of the generics here.
@@ -12,7 +15,7 @@ function defineNextConfig(config) {
   return config;
 }
 
-export default defineNextConfig({
+export default withTM(defineNextConfig({
   reactStrictMode: true,
   swcMinify: true
-});
+}))
