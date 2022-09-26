@@ -2,14 +2,16 @@
 
 ## Prerequisites
 - ffmpeg
-- node (>= v14)
-- npm
-- yarn
+- node v16.17.0
+- yarn v3.2.3
+- npm >= 8.15
 
-## Initial Setup
+## Setup
 ```bash
 $ yarn # install dependencies
 $ yarn db:gen # generate prisma client
+$ yarn db:seed # optional: seed database
+$ yarn dev # run all components in parallel
 ```
 
 Setup .env file, for example:
@@ -33,4 +35,15 @@ The Downloader downloads the youtube videos and cuts the clips from
 those video files.
 
 ## Features
-- [ ] 
+
+### Bigger Features
+- [ ] S3 Buckets for video storage
+- [ ] Queue System for downloading videos and clips (f.e. redis and bull)
+- [ ] Advanced Video Management (folders, tags, title search)
+- [ ] Download youtube videos in browser (with cors.sh / cors-anywhere proxy and ytdl-browser)
+
+### Smaller Features
+- [ ] Save thumbnails and show as video poster
+- [ ] Failed youtube clip download management
+- [ ] Clip modal, instead of opening mp4 in new tab
+- [ ] UI / UX Improvements (modals for alerts and prompts)
