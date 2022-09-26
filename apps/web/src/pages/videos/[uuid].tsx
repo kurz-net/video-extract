@@ -55,7 +55,7 @@ const Video: NextPage = () => {
     <main className="m-8">
       {video.isLoading && <div>Loading video...</div>}
       {video.isFetched && <>
-        <div className="flex flex-wrap md:flex-nowrap space-x-0 md:space-x-8 space-y-8 md:space-y-0">
+        <div className="flex flex-wrap lg:flex-nowrap space-x-0 lg:space-x-8 space-y-8 lg:space-y-0">
           <div className="w-full space-y-4">
             <div className="w-full">
               <video
@@ -79,9 +79,11 @@ const Video: NextPage = () => {
               <button className="btn btn-outline" onClick={handleCreateClip}>create clip</button>
             </div>
           </div>
-          <div className="w-full">
+          <div className="w-full space-y-4">
             <h2 className="text-2xl">Clips</h2>
-            {video.data?.clips.map(clip => <VideoClipDisplay key={clip.uuid} clip={clip} />)}
+            <div className="flex flex-col space-y-3">
+              {video.data?.clips.map(clip => <VideoClipDisplay key={clip.uuid} clip={clip} />)}
+            </div>
           </div>
         </div>
       </>}
@@ -111,21 +113,19 @@ function VideoClipDisplay(props: VideoClipDisplayProps) {
   }, [clip])
 
   return (
-    <div key={clip.uuid} className="flex my-2">
-      <div>
+    <div key={clip.uuid} className="flex justify-between">
+      <div className="w-full">
         {!!clip.title ? <span>{clip.title}</span> : <span className="italic">No title</span>}
       </div>
-      <div className="mx-2">|</div>
-      <div>
+      <div className="w-full">
         {formatTime(clip.startTime)} - {formatTime(clip.endTime)} ({clip.endTime-clip.startTime}s)
       </div>
-      <div className="mx-2">|</div>
-      <div>
+      <div className="w-full flex justify-end">
         {!clip.downloaded && <span>downloading...</span>}
         {clip.downloaded && <div>
-          <a className="underline" target="_blank" href={`${API_URL}${clip.uuid}.mp4`}>view</a>
-          <button className="underline ml-2" onClick={handleRename}>rename</button>
-          <button className="underline ml-2" onClick={handleDelete}>delete</button>
+          <a className="btn btn-ghost btn-sm" target="_blank" href={`${API_URL}${clip.uuid}.mp4`}>view</a>
+          <button className="btn btn-ghost btn-sm" onClick={handleRename}>rename</button>
+          <button className="btn btn-ghost btn-sm" onClick={handleDelete}>delete</button>
         </div>}
       </div>
     </div>

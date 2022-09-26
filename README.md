@@ -19,18 +19,6 @@ API_PORT=5000
 NEXT_PUBLIC_API_URL="http://localhost:5000"
 ```
 
-## Development setup
-```bash
-$ yarn dev:all # run all components in parallel
-```
-
-Or run these commands in separate shells
-```bash
-$ yarn dev:web
-$ yarn dev:down:api
-$ yarn dev:down:down
-```
-
 ## Overview
 There are 3 components to this software:
 - Web Application
@@ -43,3 +31,6 @@ The API is only there to serve the downloaded mp4 video and clip files.
 
 The Downloader downloads the youtube videos and cuts the clips from
 those video files.
+
+## Features
+- [ ] 
