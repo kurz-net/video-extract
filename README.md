@@ -41,9 +41,11 @@ those video files.
 - [ ] Queue System for downloading videos and clips (f.e. redis and bull)
 - [ ] Advanced Video Management (folders, tags, title search)
 - [ ] Download youtube videos in browser (with cors.sh / cors-anywhere proxy and ytdl-browser)
+- [ ] Download all videos in playlist
 
 ### Smaller Features
 - [ ] Save thumbnails and show as video poster
 - [ ] Failed youtube clip download management
 - [ ] Clip modal, instead of opening mp4 in new tab
 - [ ] UI / UX Improvements (modals for alerts and prompts)
+- [ ] Bulk Import (text field with comma or line separated urls)
