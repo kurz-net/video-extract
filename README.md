@@ -24,6 +24,13 @@ $ yarn db:seed # optional: seed database
 $ yarn dev # run all components in parallel
 ```
 
+## Development
+
+### Typesafety
+
+You can run the `check-types.sh` script in the root directory (`./scripts/check-types.sh`)
+to check for typescript errors.
+
 ## Overview
 
 There are 3 components to this software:
