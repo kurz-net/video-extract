@@ -20,6 +20,7 @@ NEXT_PUBLIC_API_URL="http://localhost:5000"
 ```bash
 $ yarn # install dependencies
 $ yarn db:gen # generate prisma client
+$ npx prisma db push # make sure db has the correct schema
 $ yarn db:seed # optional: seed database
 $ yarn dev # run all components in parallel
 ```
