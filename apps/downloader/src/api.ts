@@ -1,7 +1,7 @@
-import express from "express"
-import cors from "cors"
+import express from "express";
+import cors from "cors";
 
-export const app = express()
+export const app = express();
 
-app.use(cors())
-app.use(express.static("files"))
+app.use(cors());
+app.use(express.static("files"));

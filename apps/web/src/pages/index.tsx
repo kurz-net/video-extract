@@ -1,77 +1,97 @@
-import { useEffect } from "react"
+import { useEffect } from "react";
 import type { NextPage } from "next";
-import Link from "next/link"
+import Link from "next/link";
 import { trpc } from "../utils/trpc";
 import { API_URL } from "../utils/config";
 
 const Home: NextPage = () => {
   const videos = trpc.useQuery(["videos"]);
-  const createVideo = trpc.useMutation(["createVideo"])
-  const deleteVideo = trpc.useMutation(["deleteVideo"])
+  const createVideo = trpc.useMutation(["createVideo"]);
+  const deleteVideo = trpc.useMutation(["deleteVideo"]);
 
   useEffect(() => {
-    const interval = setInterval(videos.refetch, 100)
-    return () => clearInterval(interval)
-  }, [])
+    const interval = setInterval(videos.refetch, 100);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleCreateVideo = () => {
-    const url = prompt("YouTube URL")
+    const url = prompt("YouTube URL");
     if (!url) return;
-    createVideo.mutate({ url })
-  }
+    createVideo.mutate({ url });
+  };
 
   const handleDeleteVideo = (uuid: string) => {
-    const ok = confirm("Are you sure?")
+    const ok = confirm("Are you sure?");
     if (!ok) return;
-    deleteVideo.mutate({ videoUuid: uuid })
-  }
+    deleteVideo.mutate({ videoUuid: uuid });
+  };
 
-  return <>
-    <div className="navbar bg-base-100 p-4">
-      <div className="flex-1">
-        <a className="btn btn-ghost normal-case text-xl">Video Extract</a>
+  return (
+    <>
+      <div className="navbar bg-base-100 p-4">
+        <div className="flex-1">
+          <a className="btn btn-ghost normal-case text-xl">Video Extract</a>
+        </div>
+        <div className="navbar-end">
+          <button className="btn btn-primary" onClick={handleCreateVideo}>
+            + video
+          </button>
+        </div>
       </div>
-      <div className="navbar-end">
-        <button className="btn btn-primary" onClick={handleCreateVideo}>
-          + video
-        </button>
-      </div>
-    </div>
-    <main className="m-8">
-      {videos.isLoading && <div>Loading videos...</div>}
-      <div className="w-full grid grid-cols-3 gap-8">
-        {videos.data?.map(video => (
-          <div key={video.uuid} className="card w-full bg-base-100 shadow-xl">
-            <figure>
-              {video.progress === 100 && <>
-                <video
-                  className="mb-4"
-                  src={`${API_URL}${video.uuid}.mp4`}
-                  controls
-                />
-              </>}
-            </figure>
-            <div className="card-body">
-              <h2 className="card-title">
-                {video.progress === 100 && <span>{video.title}</span>}
-                {video.progress < 100 && <span className="italic">Unknown</span>}
-              </h2>
-              <p>
-                {video.progress}% downloaded<br />
-                {video._count.clips} clip/s
-              </p>
-              <div className="card-actions justify-end">
-                {video.progress === 100 && (<>
-                  <button className="btn btn-ghost" onClick={() => handleDeleteVideo(video.uuid)}>delete</button>
-                  <a role="button" href={`/videos/${video.uuid}`} className="btn btn-ghost">view</a>
-                </>)}
+      <main className="m-8">
+        {videos.isLoading && <div>Loading videos...</div>}
+        <div className="w-full grid grid-cols-3 gap-8">
+          {videos.data?.map((video) => (
+            <div key={video.uuid} className="card w-full bg-base-100 shadow-xl">
+              <figure>
+                {video.progress === 100 && (
+                  <>
+                    <video
+                      className="mb-4"
+                      src={`${API_URL}${video.uuid}.mp4`}
+                      controls
+                    />
+                  </>
+                )}
+              </figure>
+              <div className="card-body">
+                <h2 className="card-title">
+                  {video.progress === 100 && <span>{video.title}</span>}
+                  {video.progress < 100 && (
+                    <span className="italic">Unknown</span>
+                  )}
+                </h2>
+                <p>
+                  {video.progress}% downloaded
+                  <br />
+                  {video._count.clips} clip/s
+                </p>
+                <div className="card-actions justify-end">
+                  {video.progress === 100 && (
+                    <>
+                      <button
+                        className="btn btn-ghost"
+                        onClick={() => handleDeleteVideo(video.uuid)}
+                      >
+                        delete
+                      </button>
+                      <a
+                        role="button"
+                        href={`/videos/${video.uuid}`}
+                        className="btn btn-ghost"
+                      >
+                        view
+                      </a>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-    </main>
-  </>;
+          ))}
+        </div>
+      </main>
+    </>
+  );
 };
 
 export default Home;

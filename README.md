@@ -1,13 +1,16 @@
 # Video Extraction Tool
 
 ## Prerequisites
+
 - [ffmpeg](https://ffmpeg.org/)
 - node v16.17.0
 - yarn v3.2.3
 - npm >= 8.15
 
 ## Setup
+
 ### Create .env
+
 ```
 DATABASE_URL=file:./database.db
 API_PORT=5000
@@ -22,7 +25,9 @@ $ yarn dev # run all components in parallel
 ```
 
 ## Overview
+
 There are 3 components to this software:
+
 - Web Application
 - API
 - Downloader
@@ -37,6 +42,7 @@ those video files.
 ## Features
 
 ### Bigger Features
+
 - [ ] S3 Buckets for video storage
 - [ ] Queue System for downloading videos and clips (f.e. redis and bull)
 - [ ] Advanced Video Management (folders, tags, title search)
@@ -44,6 +50,7 @@ those video files.
 - [ ] Download all videos in playlist
 
 ### Smaller Features
+
 - [ ] Save thumbnails and show as video poster
 - [ ] Failed youtube clip download management
 - [ ] Clip modal, instead of opening mp4 in new tab

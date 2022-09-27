@@ -1,12 +1,12 @@
 // src/pages/_app.tsx
 import { withTRPC } from "@trpc/next";
-import type { AppRouter } from "../server/router"
+import type { AppRouter } from "../server/router";
 import type { AppType } from "next/dist/shared/lib/utils";
-import superjson from "superjson"
+import superjson from "superjson";
 import "../styles/globals.css";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
-  return <Component {...pageProps} />
+  return <Component {...pageProps} />;
 };
 
 const getBaseUrl = () => {
