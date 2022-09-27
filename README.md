@@ -1,24 +1,24 @@
 # Video Extraction Tool
 
 ## Prerequisites
-- ffmpeg
+- [ffmpeg](https://ffmpeg.org/)
 - node v16.17.0
 - yarn v3.2.3
 - npm >= 8.15
 
 ## Setup
+### Create .env
+```
+DATABASE_URL=file:./database.db
+API_PORT=5000
+NEXT_PUBLIC_API_URL="http://localhost:5000"
+```
+
 ```bash
 $ yarn # install dependencies
 $ yarn db:gen # generate prisma client
 $ yarn db:seed # optional: seed database
 $ yarn dev # run all components in parallel
-```
-
-Setup .env file, for example:
-```
-DATABASE_URL=file:./database.db
-API_PORT=5000
-NEXT_PUBLIC_API_URL="http://localhost:5000"
 ```
 
 ## Overview
