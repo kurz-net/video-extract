@@ -15,6 +15,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "db:gen": "prisma generate",
     "db:seed": "prisma db seed",
+    "db:setup": "yarn db:gen && npx prisma db push && yarn db:seed",
     "db:clear": "tsx packages/prisma/src/clear.ts",
     "dev": "yarn wrap-env turbo run dev --parallel",
     "build": "yarn wrap-env turbo run build"

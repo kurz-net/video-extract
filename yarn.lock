@@ -466,9 +466,9 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:^18.6.2":
-  version: 18.7.22
-  resolution: "@types/node@npm:18.7.22"
-  checksum: 81016612ad01eee71aa518b9e91c71a54706bbc948c3e9655f80aba75cd4b646cde9b023bf284679c403d6d17b971edc4deec0457421254bbdb78e9773d04804
+  version: 18.7.23
+  resolution: "@types/node@npm:18.7.23"
+  checksum: 2c8df0830d8345e5cd1ca17feb9cf43fa667aae749888e0a068c5c1b35eaedd2f9b24ed987a0758078395edf7a03681e5e0b7790a518ff7afe1ff6d8459f7b4a
   languageName: node
   linkType: hard
 
@@ -648,7 +648,7 @@ __metadata:
     daisyui: ^2.31.0
     eslint: 8.18.0
     eslint-config-next: 12.2.3
-    next: latest
+    next: 12.3.1
     next-transpile-modules: ^9.0.0
     postcss: ^8.4.14
     react: 18.2.0
@@ -1487,9 +1487,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.251":
-  version: 1.4.262
-  resolution: "electron-to-chromium@npm:1.4.262"
-  checksum: fee9ee842495f5cc4209b3af3a6ef0737165a19b62efd10825d7eb84f8cfb627380b4cf9d82fae5fb98cb065194dc974e0dec8b61b40d9c96e430f30fa13485c
+  version: 1.4.264
+  resolution: "electron-to-chromium@npm:1.4.264"
+  checksum: c716e480224164f7340033956adb95593bf2518571733c66ec647b30c9920b070923787ddfd3b1c466cb493c8e85f36c864e224e55a0e28fba1f1bc0fbf95d13
   languageName: node
   linkType: hard
 
@@ -3283,7 +3283,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next@npm:latest":
+"next@npm:12.3.1":
   version: 12.3.1
   resolution: "next@npm:12.3.1"
   dependencies:
