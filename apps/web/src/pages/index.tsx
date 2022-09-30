@@ -25,7 +25,6 @@ const Home: NextPage = () => {
   const handleBulkCreateVidoes = () => {
     const bulkUrls = urls.split(/[,\n \r\n ]+/).map((url) => ({ url }));
     if (!bulkUrls[0]?.url) return;
-    console.log(bulkUrls);
     createManyVideo.mutate(bulkUrls);
     setUrls("");
   };

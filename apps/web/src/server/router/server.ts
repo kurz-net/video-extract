@@ -36,7 +36,6 @@ export const videoRouter = createRouter()
       })
     ),
     async resolve({ input }) {
-      console.log(input);
       input.map(
         async (url) =>
           await prisma.video.create({
@@ -45,12 +44,6 @@ export const videoRouter = createRouter()
             },
           })
       );
-      // const video = await prisma.video.create({
-      //   data: {
-      //     originUrl: input.url,
-      //   },
-      // });
-      // return video;
       return;
     },
   })
