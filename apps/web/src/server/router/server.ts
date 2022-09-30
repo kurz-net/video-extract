@@ -29,6 +29,31 @@ export const videoRouter = createRouter()
       return video;
     },
   })
+  .mutation("createManyVideo", {
+    input: z.array(
+      z.object({
+        url: z.string().url(),
+      })
+    ),
+    async resolve({ input }) {
+      console.log(input);
+      input.map(
+        async (url) =>
+          await prisma.video.create({
+            data: {
+              originUrl: url.url,
+            },
+          })
+      );
+      // const video = await prisma.video.create({
+      //   data: {
+      //     originUrl: input.url,
+      //   },
+      // });
+      // return video;
+      return;
+    },
+  })
   .mutation("createVideo", {
     input: z.object({
       url: z.string().url(),
@@ -42,6 +67,7 @@ export const videoRouter = createRouter()
       return video;
     },
   })
+
   .mutation("createClip", {
     input: z.object({
       videoUuid: z.string(),
