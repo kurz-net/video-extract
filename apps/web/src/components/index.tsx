@@ -1,0 +1,1 @@
+export {default as ThumbnailModal} from './modals/thumbnail-modal'

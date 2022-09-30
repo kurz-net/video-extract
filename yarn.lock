@@ -621,7 +621,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@vx/prisma@workspace:packages/prisma"
   dependencies:
+    "@prisma/client": ^4.3.1
     "@vx/tsconfig": "*"
+    prisma: ^4.3.1
   languageName: unknown
   linkType: soft
 
@@ -1487,9 +1489,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.251":
-  version: 1.4.264
-  resolution: "electron-to-chromium@npm:1.4.264"
-  checksum: c716e480224164f7340033956adb95593bf2518571733c66ec647b30c9920b070923787ddfd3b1c466cb493c8e85f36c864e224e55a0e28fba1f1bc0fbf95d13
+  version: 1.4.265
+  resolution: "electron-to-chromium@npm:1.4.265"
+  checksum: 6ddc52c7219b31c72f0ed7f82ab33295878d2285ee95356549ac580df9c941a1ebd60efd19745992b4b20d68d09b56d10f609b7877ac60f8e4d612ef67afd0f6
   languageName: node
   linkType: hard
 
@@ -4514,58 +4516,58 @@ __metadata:
   languageName: node
   linkType: hard
 
-"turbo-darwin-64@npm:1.5.3":
-  version: 1.5.3
-  resolution: "turbo-darwin-64@npm:1.5.3"
+"turbo-darwin-64@npm:1.5.4":
+  version: 1.5.4
+  resolution: "turbo-darwin-64@npm:1.5.4"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo-darwin-arm64@npm:1.5.3":
-  version: 1.5.3
-  resolution: "turbo-darwin-arm64@npm:1.5.3"
+"turbo-darwin-arm64@npm:1.5.4":
+  version: 1.5.4
+  resolution: "turbo-darwin-arm64@npm:1.5.4"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"turbo-linux-64@npm:1.5.3":
-  version: 1.5.3
-  resolution: "turbo-linux-64@npm:1.5.3"
+"turbo-linux-64@npm:1.5.4":
+  version: 1.5.4
+  resolution: "turbo-linux-64@npm:1.5.4"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo-linux-arm64@npm:1.5.3":
-  version: 1.5.3
-  resolution: "turbo-linux-arm64@npm:1.5.3"
+"turbo-linux-arm64@npm:1.5.4":
+  version: 1.5.4
+  resolution: "turbo-linux-arm64@npm:1.5.4"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"turbo-windows-64@npm:1.5.3":
-  version: 1.5.3
-  resolution: "turbo-windows-64@npm:1.5.3"
+"turbo-windows-64@npm:1.5.4":
+  version: 1.5.4
+  resolution: "turbo-windows-64@npm:1.5.4"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo-windows-arm64@npm:1.5.3":
-  version: 1.5.3
-  resolution: "turbo-windows-arm64@npm:1.5.3"
+"turbo-windows-arm64@npm:1.5.4":
+  version: 1.5.4
+  resolution: "turbo-windows-arm64@npm:1.5.4"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
 "turbo@npm:^1.5.3":
-  version: 1.5.3
-  resolution: "turbo@npm:1.5.3"
+  version: 1.5.4
+  resolution: "turbo@npm:1.5.4"
   dependencies:
-    turbo-darwin-64: 1.5.3
-    turbo-darwin-arm64: 1.5.3
-    turbo-linux-64: 1.5.3
-    turbo-linux-arm64: 1.5.3
-    turbo-windows-64: 1.5.3
-    turbo-windows-arm64: 1.5.3
+    turbo-darwin-64: 1.5.4
+    turbo-darwin-arm64: 1.5.4
+    turbo-linux-64: 1.5.4
+    turbo-linux-arm64: 1.5.4
+    turbo-windows-64: 1.5.4
+    turbo-windows-arm64: 1.5.4
   dependenciesMeta:
     turbo-darwin-64:
       optional: true
@@ -4581,7 +4583,7 @@ __metadata:
       optional: true
   bin:
     turbo: bin/turbo
-  checksum: c79c3b1961c25f92f242ddb6344ca3e405cdb36aa6193ab00ddafa29de3540bffd3ab6d5c0ec5613e038bb5357ed1b0596042ec58372fe4b8373784377f9063c
+  checksum: 37f16e8a3e30c032d3fe250fff4a3c781702b3cd9e634855196a97aca2b4c7d3efeffbbd305affc0a4f677e1dfe3007a7d1953781f31f767f1a2a3ff71cf134d
   languageName: node
   linkType: hard
 
@@ -4622,12 +4624,12 @@ __metadata:
   linkType: hard
 
 "typescript@npm:^4.7.4":
-  version: 4.8.3
-  resolution: "typescript@npm:4.8.3"
+  version: 4.8.4
+  resolution: "typescript@npm:4.8.4"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 8286a5edcaf3d68e65c451aa1e7150ad1cf53ee0813c07ec35b7abdfdb10f355ecaa13c6a226a694ae7a67785fd7eeebf89f845da0b4f7e4a35561ddc459aba0
+  checksum: 3e4f061658e0c8f36c820802fa809e0fd812b85687a9a2f5430bc3d0368e37d1c9605c3ce9b39df9a05af2ece67b1d844f9f6ea8ff42819f13bcb80f85629af0
   languageName: node
   linkType: hard
 
@@ -4642,12 +4644,12 @@ __metadata:
   linkType: hard
 
 "typescript@patch:typescript@^4.7.4#~builtin<compat/typescript>":
-  version: 4.8.3
-  resolution: "typescript@patch:typescript@npm%3A4.8.3#~builtin<compat/typescript>::version=4.8.3&hash=a1c5e5"
+  version: 4.8.4
+  resolution: "typescript@patch:typescript@npm%3A4.8.4#~builtin<compat/typescript>::version=4.8.4&hash=a1c5e5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 2222d2382fb3146089b1d27ce2b55e9d1f99cc64118f1aba75809b693b856c5d3c324f052f60c75b577947fc538bc1c27bad0eb76cbdba9a63a253489504ba7e
+  checksum: 563a0ef47abae6df27a9a3ab38f75fc681f633ccf1a3502b1108e252e187787893de689220f4544aaf95a371a4eb3141e4a337deb9895de5ac3c1ca76430e5f0
   languageName: node
   linkType: hard
 

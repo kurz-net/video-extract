@@ -60,8 +60,10 @@ async function downloadVideos() {
 
     // We get the title of the video from the youtube api
     const info = await ytdl.getInfo(video.originUrl);
+   
     const {
       videoDetails: { title },
+      
     } = info;
     await prisma.video.update({
       where: { uuid: video.uuid },
