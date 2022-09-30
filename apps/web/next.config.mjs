@@ -17,5 +17,8 @@ function defineNextConfig(config) {
 
 export default withTM(defineNextConfig({
   reactStrictMode: true,
-  swcMinify: true
+  swcMinify: true,
+  images: {
+		domains: ['img.youtube.com'],
+	},
 }))
