@@ -171,6 +171,7 @@ function VideoClipDisplay(props: VideoClipDisplayProps) {
               className="btn btn-ghost btn-sm"
               target="_blank"
               href={`${API_URL}${clip.uuid}.mp4`}
+              rel="noreferrer"
             >
               view
             </a>
