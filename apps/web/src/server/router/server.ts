@@ -30,19 +30,17 @@ export const videoRouter = createRouter()
     },
   })
   .mutation("createManyVideo", {
-    input: z.array(
-      z.object({
-        url: z.string().url(),
-      })
-    ),
+    input: z.array(z.string().url()),
     async resolve({ input }) {
-      input.map(
-        async (url) =>
-          await prisma.video.create({
-            data: {
-              originUrl: url.url,
-            },
-          })
+      await Promise.all(
+        input.map(
+          async (url) =>
+            await prisma.video.create({
+              data: {
+                originUrl: url,
+              },
+            })
+        )
       );
       return;
     },

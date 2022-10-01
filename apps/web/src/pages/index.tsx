@@ -10,6 +10,7 @@ const Home: NextPage = () => {
   const deleteVideo = trpc.useMutation(["deleteVideo"]);
   const createManyVideo = trpc.useMutation(["createManyVideo"]);
   const [urls, setUrls] = useState<string>("");
+  const [openModal, setOpenModal] = useState<boolean>(false);
 
   useEffect(() => {
     const interval = setInterval(videos.refetch, 100);
@@ -23,10 +24,12 @@ const Home: NextPage = () => {
   };
 
   const handleBulkCreateVidoes = () => {
-    const bulkUrls = urls.split(/[,\n \r\n ]+/).map((url) => ({ url }));
-    if (!bulkUrls[0]?.url) return;
-    createManyVideo.mutate(bulkUrls);
+    if (urls) {
+      const bulkUrls = urls.split(/[,\n \r\n ]+/);
+      createManyVideo.mutate(bulkUrls);
+    }
     setUrls("");
+    setOpenModal(false);
   };
 
   const handleDeleteVideo = (uuid: string) => {
@@ -40,6 +43,8 @@ const Home: NextPage = () => {
       <div>
         <input
           type="checkbox"
+          checked={openModal}
+          onChange={() => setOpenModal((prev) => !prev)}
           id="createVideo-modal"
           className="modal-toggle"
         />
@@ -59,16 +64,18 @@ const Home: NextPage = () => {
             </form>
 
             <div className="modal-action flex justify-end">
-              <label htmlFor="createVideo-modal" className="btn btn-ghost">
+              <button
+                className="btn btn-ghost"
+                onClick={() => setOpenModal(false)}
+              >
                 Cancel
-              </label>
-              <label
+              </button>
+              <button
                 className="btn btn-primary"
-                htmlFor="createVideo-modal"
                 onClick={handleBulkCreateVidoes}
               >
                 Import
-              </label>
+              </button>
             </div>
           </label>
         </label>
@@ -79,12 +86,12 @@ const Home: NextPage = () => {
           <a className="btn btn-ghost normal-case text-xl">Video Extract</a>
         </div>
         <div className="navbar-end">
-          <label
-            htmlFor="createVideo-modal"
+          <button
+            onClick={() => setOpenModal((prev) => !prev)}
             className="btn modal-button btn-primary"
           >
             + video
-          </label>
+          </button>
         </div>
       </div>
       <main className="m-8">

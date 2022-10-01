@@ -18,8 +18,8 @@ model Video {
   progress Int     @default(0)
   failed   Boolean @default(false)
 
-  title     String?
-  originUrl String
+  title     String? @unique
+  originUrl String @unique
 
   fileUrl String?
 
