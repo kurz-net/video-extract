@@ -4,8 +4,8 @@ import Link from "next/link";
 import { trpc } from "../utils/trpc";
 import { API_URL } from "../utils/config";
 import dynamic from "next/dynamic";
-import { handleModalProps, useModalStore } from "./components/modalStore";
-const ViewModal = dynamic(() => import("./components/ViewModal"), {ssr: false});
+import { handleModalProps, useModalStore } from "./components/modal/modalStore";
+const ViewModal = dynamic(() => import("./components/modal/ViewModal"), {ssr: false});
 
 const Home: NextPage = () => {
   const videos = trpc.useQuery(["videos"]);
@@ -105,7 +105,7 @@ const Home: NextPage = () => {
       </div>
       <main className="m-8">
         {videos.isLoading && <div>Loading videos...</div>}
-        <div className="w-full grid grid-cols-3 gap-8">
+        <div className="w-full grid grid-cols-3 gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
           {videos.data?.map((video) => (
             <div key={video.uuid} className="card w-full bg-base-100 shadow-xl">
               <figure>
