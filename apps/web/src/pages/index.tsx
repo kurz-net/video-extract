@@ -3,6 +3,9 @@ import type { NextPage } from "next";
 import Link from "next/link";
 import { trpc } from "../utils/trpc";
 import { API_URL } from "../utils/config";
+import dynamic from "next/dynamic";
+import { handleModalProps, useModalStore } from "./components/modalStore";
+const ViewModal = dynamic(() => import("./components/ViewModal"), {ssr: false});
 
 const Home: NextPage = () => {
   const videos = trpc.useQuery(["videos"]);
@@ -10,6 +13,9 @@ const Home: NextPage = () => {
   const deleteVideo = trpc.useMutation(["deleteVideo"]);
   const createManyVideo = trpc.useMutation(["createManyVideo"]);
   const [urls, setUrls] = useState<string>("");
+
+  const { alert, isModalOpen } = useModalStore(state => state);
+  const [videoID, setVideoID] = useState<string | undefined>("");
 
   useEffect(() => {
     const interval = setInterval(videos.refetch, 100);
@@ -29,14 +35,24 @@ const Home: NextPage = () => {
     setUrls("");
   };
 
-  const handleDeleteVideo = (uuid: string) => {
-    const ok = confirm("Are you sure?");
-    if (!ok) return;
-    deleteVideo.mutate({ videoUuid: uuid });
+  const handleDeleteVideo = (uuid: string, data?: string) => {
+    if (!isModalOpen && !data) {
+      setVideoID(uuid);
+      handleModalProps({ alert: "confirm", message: "Are You Sure" });
+    } else {
+      const ok = data;
+      if (!ok) return;
+      deleteVideo.mutate({ videoUuid: uuid });
+    }
+  };
+
+  const handleModalPropFunction = (data?: string) => {
+    data && videoID && alert === "confirm" && handleDeleteVideo(videoID, data);
   };
 
   return (
     <>
+      <ViewModal func={handleModalPropFunction} />
       <div>
         <input
           type="checkbox"
