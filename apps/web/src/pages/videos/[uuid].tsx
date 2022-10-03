@@ -32,7 +32,7 @@ const Video: NextPage = () => {
   const video = trpc.useQuery(["video", { uuid }]);
   const createClip = trpc.useMutation(["createClip"]);
   const videoEl = useRef<HTMLVideoElement>(null);
-  
+
   const { isModalOpen, alert } = useModalStore((state) => state);
 
   const [startTime, setStartTime] = useState<number | undefined>();
@@ -71,7 +71,7 @@ const Video: NextPage = () => {
   }
   return (
     <>
-    <ModalView func={handleModalPropFunction} />
+      <ModalView func={handleModalPropFunction} />
       <div className="navbar bg-base-100 p-4">
         <div className="flex-1">
           <a role="button" href="/" className="btn btn-ghost btn-circle">
@@ -133,7 +133,10 @@ const Video: NextPage = () => {
 
                   <button
                     className="btn btn-outline"
-                    onClick={handleCreateClip as typeof handleCreateClip & MouseEventHandler}
+                    onClick={
+                      handleCreateClip as typeof handleCreateClip &
+                        MouseEventHandler
+                    }
                   >
                     create clip
                   </button>
@@ -205,41 +208,51 @@ function VideoClipDisplay(props: VideoClipDisplayProps) {
 
   return (
     <>
-    <ModalView func={handleModalPropFunction} />
-    <div key={clip.uuid} className="flex justify-between">
-      <div className="w-full">
-        {!!clip.title ? (
-          <span>{clip.title}</span>
-        ) : (
-          <span className="italic">No title</span>
-        )}
+      <ModalView func={handleModalPropFunction} />
+      <div key={clip.uuid} className="flex justify-between">
+        <div className="w-full">
+          {!!clip.title ? (
+            <span>{clip.title}</span>
+          ) : (
+            <span className="italic">No title</span>
+          )}
+        </div>
+        <div className="w-full">
+          {formatTime(clip.startTime)} - {formatTime(clip.endTime)} (
+          {clip.endTime - clip.startTime}s)
+        </div>
+        <div className="w-full flex justify-end">
+          {!clip.downloaded && <span>downloading...</span>}
+          {clip.downloaded && (
+            <div>
+              <a
+                className="btn btn-ghost btn-sm"
+                target="_blank"
+                href={`${API_URL}${clip.uuid}.mp4`}
+                rel="noreferrer"
+              >
+                view
+              </a>
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={
+                  handleRename as typeof handleRename & MouseEventHandler
+                }
+              >
+                rename
+              </button>
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={
+                  handleDelete as typeof handleDelete & MouseEventHandler
+                }
+              >
+                delete
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-      <div className="w-full">
-        {formatTime(clip.startTime)} - {formatTime(clip.endTime)} (
-        {clip.endTime - clip.startTime}s)
-      </div>
-      <div className="w-full flex justify-end">
-        {!clip.downloaded && <span>downloading...</span>}
-        {clip.downloaded && (
-          <div>
-            <a
-              className="btn btn-ghost btn-sm"
-              target="_blank"
-              href={`${API_URL}${clip.uuid}.mp4`}
-              rel="noreferrer"
-            >
-              view
-            </a>
-            <button className="btn btn-ghost btn-sm" onClick={handleRename as typeof handleRename & MouseEventHandler}>
-              rename
-            </button>
-            <button className="btn btn-ghost btn-sm" onClick={handleDelete as typeof handleDelete & MouseEventHandler}>
-              delete
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
     </>
   );
 }

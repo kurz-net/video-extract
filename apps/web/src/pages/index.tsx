@@ -5,7 +5,9 @@ import { trpc } from "../utils/trpc";
 import { API_URL } from "../utils/config";
 import dynamic from "next/dynamic";
 import { handleModalProps, useModalStore } from "./components/modal/modalStore";
-const ViewModal = dynamic(() => import("./components/modal/ViewModal"), {ssr: false});
+const ViewModal = dynamic(() => import("./components/modal/ViewModal"), {
+  ssr: false,
+});
 
 const Home: NextPage = () => {
   const videos = trpc.useQuery(["videos"]);
@@ -14,7 +16,7 @@ const Home: NextPage = () => {
   const createManyVideo = trpc.useMutation(["createManyVideo"]);
   const [urls, setUrls] = useState<string>("");
 
-  const { alert, isModalOpen } = useModalStore(state => state);
+  const { alert, isModalOpen } = useModalStore((state) => state);
   const [videoID, setVideoID] = useState<string | undefined>("");
 
   useEffect(() => {

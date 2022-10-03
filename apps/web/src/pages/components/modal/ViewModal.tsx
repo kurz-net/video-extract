@@ -42,16 +42,17 @@ const Modal = ({ func }: Props) => {
             </>
           )}
           <div>
-            {
-              alert !== "alert" &&
-              <button className="btn btn-ghost px-8 mt-4" onClick={handleCancel}>
+            {alert !== "alert" && (
+              <button
+                className="btn btn-ghost px-8 mt-4"
+                onClick={handleCancel}
+              >
                 Cancel
               </button>
-            }
-          <button className="btn btn-primary px-8 mt-4" onClick={handleClick}>
-            {alert === "alert" || alert === "confirm" ? "Ok" : "Done"}
-          </button>
-
+            )}
+            <button className="btn btn-primary px-8 mt-4" onClick={handleClick}>
+              {alert === "alert" || alert === "confirm" ? "Ok" : "Done"}
+            </button>
           </div>
         </div>
       </div>
