@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, MouseEventHandler } from "react";
+import { useRef, useState, useCallback, useReducer, MouseEventHandler } from "react";
 import { useRouter } from "next/router";
 import type { NextPage } from "next";
 import { inferQueryOutput, trpc } from "../../utils/trpc";
@@ -6,11 +6,11 @@ import { API_URL } from "../../utils/config";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import dynamic from "next/dynamic";
 import {
-  useModalStore,
-  handleModalProps,
+  reducer,
+  initialModalValue,
 } from "../components/modal/modalStore";
 
-const ModalView = dynamic(() => import("../components/modal/ViewModal"), {
+const ViewModal = dynamic(() => import("../components/modal/ViewModal"), {
   ssr: false,
 });
 
@@ -33,32 +33,26 @@ const Video: NextPage = () => {
   const createClip = trpc.useMutation(["createClip"]);
   const videoEl = useRef<HTMLVideoElement>(null);
 
-  const { isModalOpen, alert } = useModalStore((state) => state);
+  const [ modalValues, dispatch ] = useReducer(reducer, initialModalValue);
 
   const [startTime, setStartTime] = useState<number | undefined>();
   const [endTime, setEndTime] = useState<number | undefined>();
 
   const handleModalPropFunction = (data?: string) => {
-    data && alert === "prompt" && handleCreateClip(data);
+    data && modalValues.alertType === "prompt" && handleCreateClip(data);
   };
 
   const handleCreateClip = (data?: string) => {
     if (startTime === undefined || endTime === undefined) {
-      handleModalProps({
-        alert: "alert",
-        message: "Start or end time is not defined",
-      });
+      dispatch({type: "alert", payload:{message: "Start or end time is not defined"}});
       return;
     }
     if (startTime >= endTime) {
-      handleModalProps({
-        alert: "alert",
-        message: "The start time must be earlier than the end time!",
-      });
+      dispatch({type: "alert", payload: {message: "The start time must be earlier than the end time!"}});
       return;
     }
-    if (!isModalOpen)
-      handleModalProps({ alert: "prompt", message: "video clip name" });
+    if (!modalValues.isOpen)
+      dispatch({ type: "prompt", payload: {message: "video clip name"} });
     else {
       const title = data;
       if (!title) return;
@@ -71,7 +65,8 @@ const Video: NextPage = () => {
   }
   return (
     <>
-      <ModalView func={handleModalPropFunction} />
+    <ViewModal message={modalValues.message} alert={modalValues.alertType} isOpen={modalValues.isOpen} func={handleModalPropFunction} close={() => dispatch({type: "close"})} />
+      <div>
       <div className="navbar bg-base-100 p-4">
         <div className="flex-1">
           <a role="button" href="/" className="btn btn-ghost btn-circle">
@@ -81,6 +76,7 @@ const Video: NextPage = () => {
             {video.data?.title}
           </a>
         </div>
+      </div>
       </div>
       <main className="m-8">
         {video.isLoading && <div>Loading video...</div>}
@@ -165,50 +161,44 @@ type VideoClipDisplayProps = {
 };
 function VideoClipDisplay(props: VideoClipDisplayProps) {
   const { clip } = props;
-  const { alert, isModalOpen } = useModalStore((state) => state);
+  const [ modalValues, dispatch ] = useReducer(reducer, initialModalValue);
 
   const handleModalPropFunction = (data?: string) => {
-    data && alert === "prompt" && handleRename(data);
-    data && alert === "confirm" && handleDelete(data);
+    data && modalValues.alertType === "prompt" && handleRename(data);
+    data && modalValues.alertType === "confirm" && handleDelete(data);
   };
 
   const renameClip = trpc.useMutation(["renameClip"]);
   const handleRename = useCallback(
     (data?: string) => {
-      if (!isModalOpen) {
-        handleModalProps({
-          alert: "prompt",
-          message: `New video clip name, ${clip.title}`,
-        });
+      if(!modalValues.isOpen) {
+        dispatch({type: "prompt", payload: {message: `New video clip name, ${clip.title}`}});
       } else {
         const title = data;
         if (!title) return;
         renameClip.mutate({ title, clipUuid: clip.uuid });
       }
     },
-    [clip, isModalOpen]
+    [clip, modalValues.isOpen]
   );
 
   const deleteClip = trpc.useMutation(["deleteClip"]);
   const handleDelete = useCallback(
     (data?: string | boolean) => {
-      if (!isModalOpen) {
-        handleModalProps({
-          alert: "confirm",
-          message: "Do you really want to delete this clip?",
-        });
+      if (!modalValues.isOpen) {
+        dispatch({type: "confirm", payload: {message: "Do you really want to delete this clip?"}});
       } else {
         const ok = data;
         if (!ok) return;
         deleteClip.mutate({ clipUuid: clip.uuid });
       }
     },
-    [clip, isModalOpen]
+    [clip, modalValues.isOpen]
   );
 
   return (
     <>
-      <ModalView func={handleModalPropFunction} />
+      <ViewModal message={modalValues.message} alert={modalValues.alertType} isOpen={modalValues.isOpen} func={handleModalPropFunction} close={() => dispatch({type: "close"})} />
       <div key={clip.uuid} className="flex justify-between">
         <div className="w-full">
           {!!clip.title ? (

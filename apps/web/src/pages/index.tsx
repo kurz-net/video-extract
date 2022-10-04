@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useReducer } from "react";
 import type { NextPage } from "next";
 import Link from "next/link";
 import { trpc } from "../utils/trpc";
 import { API_URL } from "../utils/config";
 import dynamic from "next/dynamic";
-import { handleModalProps, useModalStore } from "./components/modal/modalStore";
+import { initialModalValue, reducer } from "./components/modal/modalStore";
 const ViewModal = dynamic(() => import("./components/modal/ViewModal"), {
   ssr: false,
 });
@@ -15,8 +15,8 @@ const Home: NextPage = () => {
   const deleteVideo = trpc.useMutation(["deleteVideo"]);
   const createManyVideo = trpc.useMutation(["createManyVideo"]);
   const [urls, setUrls] = useState<string>("");
+  const [modalValues, dispatch] = useReducer(reducer, initialModalValue);
 
-  const { alert, isModalOpen } = useModalStore((state) => state);
   const [videoID, setVideoID] = useState<string | undefined>("");
 
   useEffect(() => {
@@ -38,9 +38,9 @@ const Home: NextPage = () => {
   };
 
   const handleDeleteVideo = (uuid: string, data?: string) => {
-    if (!isModalOpen && !data) {
+    if (!modalValues.isOpen && !data) {
       setVideoID(uuid);
-      handleModalProps({ alert: "confirm", message: "Are You Sure" });
+      dispatch({type: "confirm", payload: {message: "Are You Sure"}});
     } else {
       const ok = data;
       if (!ok) return;
@@ -49,12 +49,12 @@ const Home: NextPage = () => {
   };
 
   const handleModalPropFunction = (data?: string) => {
-    data && videoID && alert === "confirm" && handleDeleteVideo(videoID, data);
+    data && videoID && modalValues.alertType === "confirm" && handleDeleteVideo(videoID, data);
   };
 
   return (
     <>
-      <ViewModal func={handleModalPropFunction} />
+      <ViewModal message={modalValues.message} alert={modalValues.alertType} isOpen={modalValues.isOpen} func={handleModalPropFunction} close={() => dispatch({type: "close"})} />
       <div>
         <input
           type="checkbox"

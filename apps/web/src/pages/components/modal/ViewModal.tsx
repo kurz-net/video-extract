@@ -1,31 +1,29 @@
-import { useModalStore } from "./modalStore";
 import { createPortal } from "react-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface Props {
+  isOpen: boolean;
   func(data: string | boolean | undefined): void;
+  message: string;
+  close: () => void;
+  alert: string;
 }
-const Modal = ({ func }: Props) => {
+const Modal = ({ func, message, close, isOpen, alert }: Props) => {
   const [input, setInput] = useState("");
-  const { changeValue, alert, message, isModalOpen, changeIsModalOpen } =
-    useModalStore((state) => state);
 
   const handleChange = (e: { target: { value: string } }) => {
     setInput(e.target.value);
   };
 
   const handleClick = () => {
-    alert && alert === "prompt" ? func(input) : func(true);
+    alert === "prompt" && func(input)
+    alert === "confirm" && func(true)
     setInput("");
-    changeIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    changeIsModalOpen(false);
+    close();
   };
 
   return createPortal(
-    isModalOpen && (
+    isOpen && (
       <div className="fixed w-full h-full top-0 bottom-0 left-0 right-0 place-items-center text-center text-white pt-48">
         <div className="bg-secondary mx-auto w-72 sm:w-96 p-8 rounded-md">
           <p className="text-lg font-bold">Attention!</p>
@@ -45,7 +43,7 @@ const Modal = ({ func }: Props) => {
             {alert !== "alert" && (
               <button
                 className="btn btn-ghost px-8 mt-4"
-                onClick={handleCancel}
+                onClick={() => close()}
               >
                 Cancel
               </button>
