@@ -29,6 +29,7 @@ function formatTime(time: number): string {
 const Video: NextPage = () => {
   const router = useRouter();
   const { uuid } = router.query as { uuid: string };
+  const context = trpc.useContext()
   const video = trpc.useQuery(["video", { uuid }]);
   const createClip = trpc.useMutation(["createClip"]);
   const videoEl = useRef<HTMLVideoElement>(null);
@@ -39,10 +40,11 @@ const Video: NextPage = () => {
   const [endTime, setEndTime] = useState<number | undefined>();
 
   const handleModalPropFunction = (data?: string) => {
-    data && modalValues.alertType === "prompt" && handleCreateClip(data);
+    modalValues.alertType === "prompt" && handleCreateClip(data);
   };
 
-  const handleCreateClip = (data?: string) => {
+  const handleCreateClip = async (data?: string) => {
+    console.log("here with", data)
     if (startTime === undefined || endTime === undefined) {
       dispatch({type: "alert", payload:{message: "Start or end time is not defined"}});
       return;
@@ -51,12 +53,11 @@ const Video: NextPage = () => {
       dispatch({type: "alert", payload: {message: "The start time must be earlier than the end time!"}});
       return;
     }
-    if (!modalValues.isOpen)
+    if (!modalValues.isOpen) {
       dispatch({ type: "prompt", payload: {message: "video clip name"} });
-    else {
-      const title = data;
-      if (!title) return;
-      createClip.mutate({ title, startTime, endTime, videoUuid: uuid });
+    } else {
+      await createClip.mutateAsync({ title: data || null, startTime, endTime, videoUuid: uuid });
+      context.invalidateQueries(["video"])
     }
   };
 
