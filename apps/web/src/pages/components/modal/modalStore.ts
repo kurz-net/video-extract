@@ -23,8 +23,8 @@ export const reducer = (state: StateType, actions: ActionType) => {
       return {isOpen: true, alertType: "prompt", message: actions.payload!.message};
     case "confirm":
       return {isOpen: true, alertType: "confirm", message: actions.payload!.message};
-    case "close":
-      return {isOpen: false, alertType: "", message: ""};
+      case "close":
+        return {isOpen: false, alertType: "", message: ""};
     default:
       return state;
   }

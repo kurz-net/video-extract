@@ -5,9 +5,7 @@ import { trpc } from "../utils/trpc";
 import { API_URL } from "../utils/config";
 import dynamic from "next/dynamic";
 import { initialModalValue, reducer } from "./components/modal/modalStore";
-const ViewModal = dynamic(() => import("./components/modal/ViewModal"), {
-  ssr: false,
-});
+const ViewModal = dynamic(() => import("./components/modal/ViewModal"), { ssr: false});
 
 const Home: NextPage = () => {
   const videos = trpc.useQuery(["videos"]);
@@ -54,7 +52,7 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <ViewModal message={modalValues.message} alert={modalValues.alertType} isOpen={modalValues.isOpen} func={handleModalPropFunction} close={() => dispatch({type: "close"})} />
+      <ViewModal values={modalValues} onSend={handleModalPropFunction} close={() => dispatch({type: "close"})} />
       <div>
         <input
           type="checkbox"

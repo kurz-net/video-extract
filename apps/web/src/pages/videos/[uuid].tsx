@@ -29,7 +29,7 @@ function formatTime(time: number): string {
 const Video: NextPage = () => {
   const router = useRouter();
   const { uuid } = router.query as { uuid: string };
-  const context = trpc.useContext()
+  const context = trpc.useContext();
   const video = trpc.useQuery(["video", { uuid }]);
   const createClip = trpc.useMutation(["createClip"]);
   const videoEl = useRef<HTMLVideoElement>(null);
@@ -44,7 +44,6 @@ const Video: NextPage = () => {
   };
 
   const handleCreateClip = async (data?: string) => {
-    console.log("here with", data)
     if (startTime === undefined || endTime === undefined) {
       dispatch({type: "alert", payload:{message: "Start or end time is not defined"}});
       return;
@@ -57,7 +56,7 @@ const Video: NextPage = () => {
       dispatch({ type: "prompt", payload: {message: "video clip name"} });
     } else {
       await createClip.mutateAsync({ title: data || null, startTime, endTime, videoUuid: uuid });
-      context.invalidateQueries(["video"])
+      context.invalidateQueries(["video"]);
     }
   };
 
@@ -66,7 +65,7 @@ const Video: NextPage = () => {
   }
   return (
     <>
-    <ViewModal message={modalValues.message} alert={modalValues.alertType} isOpen={modalValues.isOpen} func={handleModalPropFunction} close={() => dispatch({type: "close"})} />
+    <ViewModal values={modalValues} onSend={handleModalPropFunction} close={() => dispatch({type: "close"})} />
       <div>
       <div className="navbar bg-base-100 p-4">
         <div className="flex-1">
@@ -163,6 +162,8 @@ type VideoClipDisplayProps = {
 function VideoClipDisplay(props: VideoClipDisplayProps) {
   const { clip } = props;
   const [ modalValues, dispatch ] = useReducer(reducer, initialModalValue);
+  const [preview,setPreview] = useState(false);
+  const context = trpc.useContext();
 
   const handleModalPropFunction = (data?: string) => {
     data && modalValues.alertType === "prompt" && handleRename(data);
@@ -171,13 +172,15 @@ function VideoClipDisplay(props: VideoClipDisplayProps) {
 
   const renameClip = trpc.useMutation(["renameClip"]);
   const handleRename = useCallback(
-    (data?: string) => {
+    async(data?: string) => {
+      setPreview(false);
       if(!modalValues.isOpen) {
         dispatch({type: "prompt", payload: {message: `New video clip name, ${clip.title}`}});
       } else {
         const title = data;
         if (!title) return;
-        renameClip.mutate({ title, clipUuid: clip.uuid });
+        await renameClip.mutateAsync({ title, clipUuid: clip.uuid });
+        context.invalidateQueries(["video"]);
       }
     },
     [clip, modalValues.isOpen]
@@ -185,21 +188,34 @@ function VideoClipDisplay(props: VideoClipDisplayProps) {
 
   const deleteClip = trpc.useMutation(["deleteClip"]);
   const handleDelete = useCallback(
-    (data?: string | boolean) => {
+    async(data?: string | boolean) => {
+      setPreview(false);
       if (!modalValues.isOpen) {
         dispatch({type: "confirm", payload: {message: "Do you really want to delete this clip?"}});
       } else {
         const ok = data;
         if (!ok) return;
-        deleteClip.mutate({ clipUuid: clip.uuid });
+        await deleteClip.mutateAsync({ clipUuid: clip.uuid });
+        context.invalidateQueries(["video"]);
       }
     },
     [clip, modalValues.isOpen]
   );
 
+  const handlePreview = () => {
+    setPreview(true);
+    dispatch({type: "alert", payload: {message: ""}});
+  }
+
   return (
     <>
-      <ViewModal message={modalValues.message} alert={modalValues.alertType} isOpen={modalValues.isOpen} func={handleModalPropFunction} close={() => dispatch({type: "close"})} />
+      <ViewModal link={`${API_URL}${clip.uuid}.mp4`} values={modalValues} onSend={handleModalPropFunction} close={() => dispatch({type: "close"})}>
+        {
+          preview 
+          &&
+          <video controls src={`${API_URL}${clip.uuid}.mp4`}></video>
+        }
+      </ViewModal>
       <div key={clip.uuid} className="flex justify-between">
         <div className="w-full">
           {!!clip.title ? (
@@ -216,14 +232,9 @@ function VideoClipDisplay(props: VideoClipDisplayProps) {
           {!clip.downloaded && <span>downloading...</span>}
           {clip.downloaded && (
             <div>
-              <a
-                className="btn btn-ghost btn-sm"
-                target="_blank"
-                href={`${API_URL}${clip.uuid}.mp4`}
-                rel="noreferrer"
-              >
+              <button className="btn btn-ghost" onClick={handlePreview}>
                 view
-              </a>
+              </button>
               <button
                 className="btn btn-ghost btn-sm"
                 onClick={
