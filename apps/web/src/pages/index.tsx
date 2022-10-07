@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useReducer } from "react";
 import type { NextPage } from "next";
 import Link from "next/link";
 import { trpc } from "../utils/trpc";
 import { API_URL } from "../utils/config";
 import callModal from "./components/modal/ViewModal";
+
 
 const Home: NextPage = () => {
   const videos = trpc.useQuery(["videos"]);
@@ -33,15 +34,15 @@ const Home: NextPage = () => {
     setOpenModal(false);
   };
 
-  const handleDeleteVideo = async (uuid: string, data?: string) => {
-    const ok = await callModal("confirm", "Are You Sure?");
+  const handleDeleteVideo = async(uuid: string) => {
+    const ok = await callModal("confirm", "Are You Sure");
     if (!ok) return;
     deleteVideo.mutate({ videoUuid: uuid });
   };
 
   return (
     <>
-    <div>
+      <div>
         <input
           type="checkbox"
           checked={openModal}
@@ -87,7 +88,7 @@ const Home: NextPage = () => {
           <a className="btn btn-ghost normal-case text-xl">Video Extract</a>
         </div>
         <div className="navbar-end">
-        <button
+          <button
             onClick={() => setOpenModal((prev) => !prev)}
             className="btn modal-button btn-primary"
           >
