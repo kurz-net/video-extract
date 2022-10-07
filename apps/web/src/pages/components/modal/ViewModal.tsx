@@ -1,46 +1,36 @@
-import { createPortal } from "react-dom";
-import { ReactNode, useState } from "react";
+import {useState} from "react";
+import ReactDOM from "react-dom";
 
-interface Props <T>{
-  values: ValueProps;
-  onSend<T extends string | boolean>(data: T): T;
-  close: () => void;
-  children?: ReactNode;
-  link?: string;
-}
+interface PropTypes {resolve: (value: boolean | string) => void, alert?: string, message: string}
 
-interface ValueProps {
-  alertType: string;
-  message: string;
-  isOpen: boolean;
-}
+const DisplayModal = <T extends PropTypes>({ resolve, alert, message }: T) => {
+    const [input, setInput] = useState("");
 
-const Modal = <T extends Props>({ onSend, close, values: {alertType: alert, message, isOpen}, children, link}: T) => {
-  const [input, setInput] = useState("");
+    const handleChange = (e: { target: { value: string } }) => {
+        setInput(e.target.value);
+    };
 
-  const handleChange = (e: { target: { value: string } }) => {
-    setInput(e.target.value);
-  };
-
-  const handleClick = async() => {
-    alert === "prompt" && await Promise.resolve(onSend(input));
-    alert === "confirm" && await Promise.resolve(onSend(true));
-    setInput("");
-    close();
-  };
-
-  return createPortal(
-    isOpen && (
-      <div className="fixed w-full h-full top-0 bottom-0 left-0 right-0 place-items-center text-center text-white pt-48">
+    async function handleClick() {
+      removeDialog();
+      alert === "prompt" && resolve(input);
+      alert === "confirm" && resolve(true);
+      setInput("");
+    }
+    function handleCancel() {
+      removeDialog();
+      resolve(false);
+    }
+    return (
+        <div className="fixed w-full h-full top-0 bottom-0 left-0 right-0 place-items-center text-center text-white pt-48">
         {
-        children ?
+        alert === "video" ?
           <div className="bg-[#999999] mx-auto w-full sm:w-96 p-1 rounded-md">
-            {children}
+            <video controls src={message}></video>
             <div className="text-end pointer-cursor">
-              <a href={link}>
+              <a href={message}>
               <button className="p-2 bg-black text-white mt-1 rounded-md">Download</button>
               </a>
-              <button className="p-2 px-4 bg-black text-white ml-2 rounded-md" onClick={() => close()}>Close</button>
+              <button className="p-2 px-4 bg-black text-white ml-2 rounded-md" onClick={handleCancel}>Close</button>
             </div>
           </div>
          :
@@ -62,7 +52,7 @@ const Modal = <T extends Props>({ onSend, close, values: {alertType: alert, mess
             {alert !== "alert" && (
               <button
                 className="btn btn-ghost px-8 mt-4"
-                onClick={() => close()}
+                onClick={handleCancel}
               >
                 Cancel
               </button>
@@ -74,9 +64,29 @@ const Modal = <T extends Props>({ onSend, close, values: {alertType: alert, mess
         </div>
         }
       </div>
-    ),
-    document.body
-  );
-};
-
-export default Modal;
+    );
+  }
+  
+  export default function callModal(alert: string, message: string) {
+    return new Promise((resolve, reject) => {
+      addDialog(alert, resolve, message);
+    });
+  }
+  
+  function addDialog(alert: string, resolve: (value: unknown) => void, message: string) {
+    const body = document.getElementsByTagName("body")[0];
+    const div = document.createElement("div");
+    div.setAttribute("id", "modal-container");
+    body!.appendChild(div);
+    ReactDOM.render(
+      <DisplayModal alert={alert} resolve={resolve} message={message} />,
+      div
+    );
+  }
+  
+  
+  function removeDialog() {
+    const div = document.getElementById("modal-container");
+    const body = document.getElementsByTagName("body")[0];
+    body!.removeChild(div as HTMLDivElement);
+  }

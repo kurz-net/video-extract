@@ -3,104 +3,45 @@ import type { NextPage } from "next";
 import Link from "next/link";
 import { trpc } from "../utils/trpc";
 import { API_URL } from "../utils/config";
-import dynamic from "next/dynamic";
-import { initialModalValue, reducer } from "./components/modal/modalStore";
-const ViewModal = dynamic(() => import("./components/modal/ViewModal"), { ssr: false});
+import callModal from "./components/modal/ViewModal";
 
 const Home: NextPage = () => {
   const videos = trpc.useQuery(["videos"]);
   const createVideo = trpc.useMutation(["createVideo"]);
   const deleteVideo = trpc.useMutation(["deleteVideo"]);
   const createManyVideo = trpc.useMutation(["createManyVideo"]);
-  const [urls, setUrls] = useState<string>("");
-  const [modalValues, dispatch] = useReducer(reducer, initialModalValue);
-
-  const [videoID, setVideoID] = useState<string | undefined>("");
 
   useEffect(() => {
     const interval = setInterval(videos.refetch, 100);
     return () => clearInterval(interval);
   }, []);
 
-  const handleCreateVideo = () => {
-    const url = prompt("YouTube URL nnnn");
-    if (!url) return;
-    createVideo.mutate({ url });
-  };
-
-  const handleBulkCreateVidoes = () => {
+  const handleBulkCreateVidoes = async() => {
+    const urls = await callModal("prompt","Please enter comma or line separated urls for bulk imports") as string;
     const bulkUrls = urls.split(/[,\n \r\n ]+/).map((url) => ({ url }));
     if (!bulkUrls[0]?.url) return;
     createManyVideo.mutate(bulkUrls);
-    setUrls("");
   };
 
-  const handleDeleteVideo = (uuid: string, data?: string) => {
-    if (!modalValues.isOpen && !data) {
-      setVideoID(uuid);
-      dispatch({type: "confirm", payload: {message: "Are You Sure"}});
-    } else {
-      const ok = data;
+  const handleDeleteVideo = async(uuid: string, data?: string) => {
+      const ok = await callModal("confirm", "Are You Sure?");
       if (!ok) return;
       deleteVideo.mutate({ videoUuid: uuid });
-    }
-  };
-
-  const handleModalPropFunction = (data?: string) => {
-    data && videoID && modalValues.alertType === "confirm" && handleDeleteVideo(videoID, data);
   };
 
   return (
     <>
-      <ViewModal values={modalValues} onSend={handleModalPropFunction} close={() => dispatch({type: "close"})} />
-      <div>
-        <input
-          type="checkbox"
-          id="createVideo-modal"
-          className="modal-toggle"
-        />
-        <label htmlFor="createVideo-modal" className="modal cursor-pointer">
-          <label className="modal-box relative">
-            <h3 className="text-lg font-bold">Youtube URL Import</h3>
-            <p className="py-4 text-sm">
-              Please enter comma or line separated urls for bulk imports
-            </p>
-
-            <form className="form-control">
-              <textarea
-                className="textarea textarea-bordered"
-                placeholder="https://wwww..."
-                onChange={(e) => setUrls(e.target.value)}
-              />
-            </form>
-
-            <div className="modal-action flex justify-end">
-              <label htmlFor="createVideo-modal" className="btn btn-ghost">
-                Cancel
-              </label>
-              <label
-                className="btn btn-primary"
-                htmlFor="createVideo-modal"
-                onClick={handleBulkCreateVidoes}
-              >
-                Import
-              </label>
-            </div>
-          </label>
-        </label>
-      </div>
-
       <div className="navbar bg-base-100 p-4">
         <div className="flex-1">
           <a className="btn btn-ghost normal-case text-xl">Video Extract</a>
         </div>
         <div className="navbar-end">
-          <label
-            htmlFor="createVideo-modal"
+          <button
+            onClick={handleBulkCreateVidoes}
             className="btn modal-button btn-primary"
           >
             + video
-          </label>
+          </button>
         </div>
       </div>
       <main className="m-8">
