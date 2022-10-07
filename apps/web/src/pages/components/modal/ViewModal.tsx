@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createRoot } from "react-dom/client";
 
 interface PropTypes {
-  resolve: (value: boolean | string) => void;
+  resolve: <T>(value: T) => void;
   alert?: string;
   message: string;
 }
