@@ -16,17 +16,20 @@ const Home: NextPage = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleBulkCreateVidoes = async() => {
-    const urls = await callModal("prompt","Please enter comma or line separated urls for bulk imports") as string;
+  const handleBulkCreateVidoes = async () => {
+    const urls = (await callModal(
+      "prompt",
+      "Please enter comma or line separated urls for bulk imports"
+    )) as string;
     const bulkUrls = urls.split(/[,\n \r\n ]+/).map((url) => ({ url }));
     if (!bulkUrls[0]?.url) return;
     createManyVideo.mutate(bulkUrls);
   };
 
-  const handleDeleteVideo = async(uuid: string, data?: string) => {
-      const ok = await callModal("confirm", "Are You Sure?");
-      if (!ok) return;
-      deleteVideo.mutate({ videoUuid: uuid });
+  const handleDeleteVideo = async (uuid: string, data?: string) => {
+    const ok = await callModal("confirm", "Are You Sure?");
+    if (!ok) return;
+    deleteVideo.mutate({ videoUuid: uuid });
   };
 
   return (
