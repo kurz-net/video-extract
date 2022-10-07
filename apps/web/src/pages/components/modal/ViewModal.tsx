@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 
 interface PropTypes {
   resolve: (value: boolean | string) => void;
@@ -14,16 +14,17 @@ const DisplayModal = <T extends PropTypes>({ resolve, alert, message }: T) => {
     setInput(e.target.value);
   };
 
-  async function handleClick() {
+  const handleClick = () => {
     removeDialog();
     alert === "prompt" && resolve(input);
     alert === "confirm" && resolve(true);
     setInput("");
-  }
-  function handleCancel() {
+  };
+
+  const handleCancel = () => {
     removeDialog();
     resolve(false);
-  }
+  };
   return (
     <div className="fixed w-full h-full top-0 bottom-0 left-0 right-0 place-items-center text-center text-white pt-48">
       {alert === "video" ? (
@@ -50,7 +51,7 @@ const DisplayModal = <T extends PropTypes>({ resolve, alert, message }: T) => {
           {alert === "prompt" && (
             <>
               <input
-                className="mt-4 h-10 w-72 border-2 border-white rounded-lg px-2 text-black"
+                className="mt-4 h-12 w-56 sm:w-72 border-2 border-white rounded-lg px-2 text-black"
                 value={input}
                 onChange={handleChange}
                 type="text"
@@ -83,23 +84,23 @@ export default function callModal(alert: string, message: string) {
   });
 }
 
-function addDialog(
+const addDialog = (
   alert: string,
   resolve: (value: unknown) => void,
   message: string
-) {
+) => {
   const body = document.getElementsByTagName("body")[0];
   const div = document.createElement("div");
   div.setAttribute("id", "modal-container");
   body!.appendChild(div);
-  ReactDOM.render(
-    <DisplayModal alert={alert} resolve={resolve} message={message} />,
-    div
+  const portal = createRoot(div);
+  portal.render(
+    <DisplayModal alert={alert} resolve={resolve} message={message} />
   );
-}
+};
 
-function removeDialog() {
+const removeDialog = () => {
   const div = document.getElementById("modal-container");
   const body = document.getElementsByTagName("body")[0];
   body!.removeChild(div as HTMLDivElement);
-}
+};

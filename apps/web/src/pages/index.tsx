@@ -21,6 +21,7 @@ const Home: NextPage = () => {
       "prompt",
       "Please enter comma or line separated urls for bulk imports"
     )) as string;
+    if (!urls) return;
     const bulkUrls = urls.split(/[,\n \r\n ]+/).map((url) => ({ url }));
     if (!bulkUrls[0]?.url) return;
     createManyVideo.mutate(bulkUrls);
