@@ -1,4 +1,4 @@
-import { useEffect, useState, useReducer } from "react";
+import { useEffect, useState } from "react";
 import type { NextPage } from "next";
 import Link from "next/link";
 import { trpc } from "../utils/trpc";
@@ -10,21 +10,27 @@ const Home: NextPage = () => {
   const createVideo = trpc.useMutation(["createVideo"]);
   const deleteVideo = trpc.useMutation(["deleteVideo"]);
   const createManyVideo = trpc.useMutation(["createManyVideo"]);
+  const [urls, setUrls] = useState<string>("");
+  const [openModal, setOpenModal] = useState<boolean>(false);
 
   useEffect(() => {
     const interval = setInterval(videos.refetch, 100);
     return () => clearInterval(interval);
   }, []);
 
-  const handleBulkCreateVidoes = async () => {
-    const urls = (await callModal(
-      "prompt",
-      "Please enter comma or line separated urls for bulk imports"
-    )) as string;
-    if (!urls) return;
-    const bulkUrls = urls.split(/[,\n \r\n ]+/).map((url) => ({ url }));
-    if (!bulkUrls[0]?.url) return;
-    createManyVideo.mutate(bulkUrls);
+  const handleCreateVideo = () => {
+    const url = prompt("YouTube URL nnnn");
+    if (!url) return;
+    createVideo.mutate({ url });
+  };
+
+  const handleBulkCreateVidoes = () => {
+    if (urls) {
+      const bulkUrls = urls.split(/[,\n \r\n ]+/);
+      createManyVideo.mutate(bulkUrls);
+    }
+    setUrls("");
+    setOpenModal(false);
   };
 
   const handleDeleteVideo = async (uuid: string, data?: string) => {
@@ -35,13 +41,54 @@ const Home: NextPage = () => {
 
   return (
     <>
+    <div>
+        <input
+          type="checkbox"
+          checked={openModal}
+          onChange={() => setOpenModal((prev) => !prev)}
+          id="createVideo-modal"
+          className="modal-toggle"
+        />
+        <label htmlFor="createVideo-modal" className="modal cursor-pointer">
+          <label className="modal-box relative">
+            <h3 className="text-lg font-bold">Youtube URL Import</h3>
+            <p className="py-4 text-sm">
+              Please enter comma or line separated urls for bulk imports
+            </p>
+
+            <form className="form-control">
+              <textarea
+                className="textarea textarea-bordered"
+                placeholder="https://wwww..."
+                onChange={(e) => setUrls(e.target.value)}
+              />
+            </form>
+
+            <div className="modal-action flex justify-end">
+              <button
+                className="btn btn-ghost"
+                onClick={() => setOpenModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={handleBulkCreateVidoes}
+              >
+                Import
+              </button>
+            </div>
+          </label>
+        </label>
+      </div>
+
       <div className="navbar bg-base-100 p-4">
         <div className="flex-1">
           <a className="btn btn-ghost normal-case text-xl">Video Extract</a>
         </div>
         <div className="navbar-end">
-          <button
-            onClick={handleBulkCreateVidoes}
+        <button
+            onClick={() => setOpenModal((prev) => !prev)}
             className="btn modal-button btn-primary"
           >
             + video
