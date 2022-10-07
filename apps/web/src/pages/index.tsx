@@ -1,8 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useReducer } from "react";
 import type { NextPage } from "next";
 import Link from "next/link";
 import { trpc } from "../utils/trpc";
 import { API_URL } from "../utils/config";
+import dynamic from "next/dynamic";
+import { initialModalValue, reducer } from "./components/modal/modalStore";
+const ViewModal = dynamic(() => import("./components/modal/ViewModal"), {
+  ssr: false,
+});
 
 const Home: NextPage = () => {
   const videos = trpc.useQuery(["videos"]);
@@ -11,6 +16,8 @@ const Home: NextPage = () => {
   const createManyVideo = trpc.useMutation(["createManyVideo"]);
   const [urls, setUrls] = useState<string>("");
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [modalValues, dispatch] = useReducer(reducer, initialModalValue);
+  const [videoID, setVideoID] = useState<string | undefined>("");
 
   useEffect(() => {
     const interval = setInterval(videos.refetch, 100);
@@ -32,14 +39,24 @@ const Home: NextPage = () => {
     setOpenModal(false);
   };
 
-  const handleDeleteVideo = (uuid: string) => {
-    const ok = confirm("Are you sure?");
-    if (!ok) return;
-    deleteVideo.mutate({ videoUuid: uuid });
+  const handleDeleteVideo = (uuid: string, data?: string) => {
+    if (!modalValues.isOpen && !data) {
+      setVideoID(uuid);
+      dispatch({type: "confirm", payload: {message: "Are You Sure"}});
+    } else {
+      const ok = data;
+      if (!ok) return;
+      deleteVideo.mutate({ videoUuid: uuid });
+    }
+  };
+
+  const handleModalPropFunction = (data?: string) => {
+    data && videoID && modalValues.alertType === "confirm" && handleDeleteVideo(videoID, data);
   };
 
   return (
     <>
+      <ViewModal message={modalValues.message} alert={modalValues.alertType} isOpen={modalValues.isOpen} func={handleModalPropFunction} close={() => dispatch({type: "close"})} />
       <div>
         <input
           type="checkbox"
@@ -96,7 +113,7 @@ const Home: NextPage = () => {
       </div>
       <main className="m-8">
         {videos.isLoading && <div>Loading videos...</div>}
-        <div className="w-full grid grid-cols-3 gap-8">
+        <div className="w-full grid grid-cols-3 gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
           {videos.data?.map((video) => (
             <div key={video.uuid} className="card w-full bg-base-100 shadow-xl">
               <figure>
