@@ -1,18 +1,16 @@
-import { useRef, useState, useCallback, useReducer, MouseEventHandler } from "react";
+import {
+  useRef,
+  useState,
+  useCallback,
+  useReducer,
+  MouseEventHandler,
+} from "react";
 import { useRouter } from "next/router";
 import type { NextPage } from "next";
 import { inferQueryOutput, trpc } from "../../utils/trpc";
 import { API_URL } from "../../utils/config";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
-import dynamic from "next/dynamic";
-import {
-  reducer,
-  initialModalValue,
-} from "../components/modal/modalStore";
-
-const ViewModal = dynamic(() => import("../components/modal/ViewModal"), {
-  ssr: false,
-});
+import callModal from "../components/modal/ViewModal";
 
 function formatTime(time: number): string {
   const seconds = time % 60;
@@ -29,36 +27,37 @@ function formatTime(time: number): string {
 const Video: NextPage = () => {
   const router = useRouter();
   const { uuid } = router.query as { uuid: string };
-  const context = trpc.useContext()
+  const context = trpc.useContext();
   const video = trpc.useQuery(["video", { uuid }]);
   const createClip = trpc.useMutation(["createClip"]);
   const videoEl = useRef<HTMLVideoElement>(null);
 
-  const [ modalValues, dispatch ] = useReducer(reducer, initialModalValue);
-
   const [startTime, setStartTime] = useState<number | undefined>();
   const [endTime, setEndTime] = useState<number | undefined>();
 
-  const handleModalPropFunction = (data?: string) => {
-    modalValues.alertType === "prompt" && handleCreateClip(data);
-  };
-
-  const handleCreateClip = async (data?: string) => {
-    console.log("here with", data)
+  const handleCreateClip = async () => {
     if (startTime === undefined || endTime === undefined) {
-      dispatch({type: "alert", payload:{message: "Start or end time is not defined"}});
+      await callModal("alert", "Start or end time is not defined");
       return;
     }
     if (startTime >= endTime) {
-      dispatch({type: "alert", payload: {message: "The start time must be earlier than the end time!"}});
+      await callModal(
+        "alert",
+        "The start time must be earlier than the end time!"
+      );
       return;
     }
-    if (!modalValues.isOpen) {
-      dispatch({ type: "prompt", payload: {message: "video clip name"} });
-    } else {
-      await createClip.mutateAsync({ title: data || null, startTime, endTime, videoUuid: uuid });
-      context.invalidateQueries(["video"])
-    }
+    const data: string | null = (await callModal(
+      "prompt",
+      "video clip name"
+    )) as string | null;
+    await createClip.mutateAsync({
+      title: data || null,
+      startTime,
+      endTime,
+      videoUuid: uuid,
+    });
+    context.invalidateQueries(["video"]);
   };
 
   if (video.isFetched && !video.data) {
@@ -66,18 +65,17 @@ const Video: NextPage = () => {
   }
   return (
     <>
-    <ViewModal message={modalValues.message} alert={modalValues.alertType} isOpen={modalValues.isOpen} func={handleModalPropFunction} close={() => dispatch({type: "close"})} />
       <div>
-      <div className="navbar bg-base-100 p-4">
-        <div className="flex-1">
-          <a role="button" href="/" className="btn btn-ghost btn-circle">
-            <ArrowLeftIcon className="w-5 h-5" />
-          </a>
-          <a className="btn btn-ghost normal-case text-xl">
-            {video.data?.title}
-          </a>
+        <div className="navbar bg-base-100 p-4">
+          <div className="flex-1">
+            <a role="button" href="/" className="btn btn-ghost btn-circle">
+              <ArrowLeftIcon className="w-5 h-5" />
+            </a>
+            <a className="btn btn-ghost normal-case text-xl">
+              {video.data?.title}
+            </a>
+          </div>
         </div>
-      </div>
       </div>
       <main className="m-8">
         {video.isLoading && <div>Loading video...</div>}
@@ -162,44 +160,36 @@ type VideoClipDisplayProps = {
 };
 function VideoClipDisplay(props: VideoClipDisplayProps) {
   const { clip } = props;
-  const [ modalValues, dispatch ] = useReducer(reducer, initialModalValue);
-
-  const handleModalPropFunction = (data?: string) => {
-    data && modalValues.alertType === "prompt" && handleRename(data);
-    data && modalValues.alertType === "confirm" && handleDelete(data);
-  };
+  const context = trpc.useContext();
 
   const renameClip = trpc.useMutation(["renameClip"]);
-  const handleRename = useCallback(
-    (data?: string) => {
-      if(!modalValues.isOpen) {
-        dispatch({type: "prompt", payload: {message: `New video clip name, ${clip.title}`}});
-      } else {
-        const title = data;
-        if (!title) return;
-        renameClip.mutate({ title, clipUuid: clip.uuid });
-      }
-    },
-    [clip, modalValues.isOpen]
-  );
+  const handleRename = useCallback(async () => {
+    const title = (await callModal(
+      "prompt",
+      `New video clip name, ${clip.title}`
+    )) as string | null;
+    if (!title) return;
+    await renameClip.mutateAsync({ title, clipUuid: clip.uuid });
+    context.invalidateQueries(["video"]);
+  }, [clip]);
 
   const deleteClip = trpc.useMutation(["deleteClip"]);
-  const handleDelete = useCallback(
-    (data?: string | boolean) => {
-      if (!modalValues.isOpen) {
-        dispatch({type: "confirm", payload: {message: "Do you really want to delete this clip?"}});
-      } else {
-        const ok = data;
-        if (!ok) return;
-        deleteClip.mutate({ clipUuid: clip.uuid });
-      }
-    },
-    [clip, modalValues.isOpen]
-  );
+  const handleDelete = useCallback(async () => {
+    const ok = await callModal(
+      "confirm",
+      "Do you really want to delete this clip?"
+    );
+    if (!ok) return;
+    await deleteClip.mutateAsync({ clipUuid: clip.uuid });
+    context.invalidateQueries(["video"]);
+  }, [clip]);
+
+  const handlePreview = async () => {
+    await callModal("video", `${API_URL}${clip.uuid}.mp4`);
+  };
 
   return (
     <>
-      <ViewModal message={modalValues.message} alert={modalValues.alertType} isOpen={modalValues.isOpen} func={handleModalPropFunction} close={() => dispatch({type: "close"})} />
       <div key={clip.uuid} className="flex justify-between">
         <div className="w-full">
           {!!clip.title ? (
@@ -216,14 +206,9 @@ function VideoClipDisplay(props: VideoClipDisplayProps) {
           {!clip.downloaded && <span>downloading...</span>}
           {clip.downloaded && (
             <div>
-              <a
-                className="btn btn-ghost btn-sm"
-                target="_blank"
-                href={`${API_URL}${clip.uuid}.mp4`}
-                rel="noreferrer"
-              >
+              <button className="btn btn-ghost" onClick={handlePreview}>
                 view
-              </a>
+              </button>
               <button
                 className="btn btn-ghost btn-sm"
                 onClick={
