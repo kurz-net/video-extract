@@ -1,30 +1,35 @@
-import { useState } from "react";
+import { useRef } from "react";
 import { createRoot } from "react-dom/client";
 
 interface PropTypes {
   resolve: <T>(value: T) => void;
-  alert?: string;
+  alert: Alert;
   message: string;
 }
 
-const DisplayModal = <T extends PropTypes>({ resolve, alert, message }: T) => {
-  const [input, setInput] = useState("");
+type Alert = "video" | "prompt" | "confirm" | "alert";
 
-  const handleChange = (e: { target: { value: string } }) => {
-    setInput(e.target.value);
-  };
+export default function callModal(alert: Alert, message: string) {
+  return new Promise((resolve, reject) => {
+    addModal(alert, resolve, message);
+  });
+}
+
+
+const DisplayModal = <T extends PropTypes>({ resolve, alert, message }: T) => {
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = () => {
-    removeDialog();
-    alert === "prompt" && resolve(input);
+    alert === "prompt" && resolve(inputRef.current!.value);
     alert === "confirm" && resolve(true);
-    setInput("");
+    removeModal();
   };
 
   const handleCancel = () => {
-    removeDialog();
     resolve(false);
+    removeModal();
   };
+
   return (
     <div className="fixed w-full h-full top-0 bottom-0 left-0 right-0 place-items-center text-center text-white pt-48">
       {alert === "video" ? (
@@ -52,8 +57,7 @@ const DisplayModal = <T extends PropTypes>({ resolve, alert, message }: T) => {
             <>
               <input
                 className="mt-4 h-12 w-56 sm:w-72 border-2 border-white rounded-lg px-2 text-black"
-                value={input}
-                onChange={handleChange}
+                ref={inputRef}
                 type="text"
               />
               <br />
@@ -78,14 +82,8 @@ const DisplayModal = <T extends PropTypes>({ resolve, alert, message }: T) => {
   );
 };
 
-export default function callModal(alert: string, message: string) {
-  return new Promise((resolve, reject) => {
-    addDialog(alert, resolve, message);
-  });
-}
-
-const addDialog = (
-  alert: string,
+const addModal = (
+  alert: Alert,
   resolve: (value: unknown) => void,
   message: string
 ) => {
@@ -93,13 +91,13 @@ const addDialog = (
   const div = document.createElement("div");
   div.setAttribute("id", "modal-container");
   body!.appendChild(div);
-  const portal = createRoot(div);
-  portal.render(
-    <DisplayModal alert={alert} resolve={resolve} message={message} />
+  const modal = createRoot(div);
+  modal.render(
+    <DisplayModal alert={alert as Alert} resolve={resolve} message={message} />
   );
 };
 
-const removeDialog = () => {
+const removeModal = () => {
   const div = document.getElementById("modal-container");
   const body = document.getElementsByTagName("body")[0];
   body!.removeChild(div as HTMLDivElement);

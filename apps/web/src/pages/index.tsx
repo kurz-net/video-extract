@@ -98,7 +98,7 @@ const Home: NextPage = () => {
       </div>
       <main className="m-8">
         {videos.isLoading && <div>Loading videos...</div>}
-        <div className="w-full grid grid-cols-3 gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+        <div className="w-full grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {videos.data?.map((video) => (
             <div key={video.uuid} className="card w-full bg-base-100 shadow-xl">
               <figure>
